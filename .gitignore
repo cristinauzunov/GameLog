@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# DATI SENSIBILI
+env.properties
