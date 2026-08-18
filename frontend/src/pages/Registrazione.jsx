@@ -1,40 +1,52 @@
-import { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert } from "react-bootstrap";
-import { AuthContext } from "../context/AuthContext";
 import api from "../api";
 
-function Login() {
+function Registrazione() {
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [nome, setNome] = useState("");
     const [errore, setErrore] = useState("");
 
-    const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    async function inviaLogin(e) {
+    async function inviaRegistrazione(e) {
         e.preventDefault();
         setErrore("");
 
         try {
-            const risposta = await api.post("/auth/login", {
+            await api.post("/auth/register", {
+                username: username,
                 email: email,
-                password: password
+                password: password,
+                nome: nome,
+                avatar: ""
             });
-            login(risposta.data.token);
-            navigate("/");
+            navigate("/login");
         } catch {
-            setErrore("Email o password non validi");
+            setErrore("Errore durante la registrazione (email o username gia in uso)");
         }
     }
 
     return (
         <Container className="mt-5" style={{ maxWidth: "400px" }}>
-            <h2 className="mb-4">Accedi a GameLog</h2>
+            <h2 className="mb-4">Registrati a GameLog</h2>
 
             {errore && <Alert variant="danger">{errore}</Alert>}
 
-            <Form onSubmit={inviaLogin}>
+            <Form onSubmit={inviaRegistrazione}>
+                <Form.Group className="mb-3">
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
+                </Form.Group>
+
                 <Form.Group className="mb-3">
                     <Form.Label>Email</Form.Label>
                     <Form.Control
@@ -55,16 +67,21 @@ function Login() {
                     />
                 </Form.Group>
 
+                <Form.Group className="mb-3">
+                    <Form.Label>Nome</Form.Label>
+                    <Form.Control
+                        type="text"
+                        value={nome}
+                        onChange={(e) => setNome(e.target.value)}
+                    />
+                </Form.Group>
+
                 <Button type="submit" variant="primary" className="w-100">
-                    Accedi
+                    Registrati
                 </Button>
             </Form>
-
-            <p className="mt-3 text-center">
-                Non hai un account? <Link to="/registrazione">Registrati</Link>
-            </p>
         </Container>
     );
 }
 
-export default Login;
+export default Registrazione;

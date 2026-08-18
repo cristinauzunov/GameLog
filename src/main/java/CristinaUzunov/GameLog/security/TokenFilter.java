@@ -33,30 +33,36 @@ public class TokenFilter extends OncePerRequestFilter {
 
         String authorization = request.getHeader("Authorization");
 
-        // se non c'e l'header o non inizia con Bearer, passo avanti senza autenticare
+        // se non c'e l'header o non inizia con "Bearer ", passo avanti senza autenticare
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // tolgo la parola Bearer e tengo solo il token
+        // tolgo la parola "Bearer " e tengo solo il token
         String token = authorization.substring(7);
 
-        // controllo che il token sia valido
-        jwtTools.verificaToken(token);
+        try {
+            // controllo che il token sia valido
+            jwtTools.verificaToken(token);
 
-        // recupero l'id dal token e carico l'utente dal database
-        Long idUtente = jwtTools.getIdFromToken(token);
-        Utente utente = utenteService.findById(idUtente);
+            // recupero l'id dal token e carico l'utente dal database
+            Long idUtente = jwtTools.getIdFromToken(token);
+            Utente utente = utenteService.findById(idUtente);
 
-        // preparo il ruolo dell'utente per Spring Security
-        List<SimpleGrantedAuthority> ruoli = new ArrayList<>();
-        ruoli.add(new SimpleGrantedAuthority("ROLE_" + utente.getRuolo().name()));
+            // preparo il ruolo dell'utente per Spring Security
+            List<SimpleGrantedAuthority> ruoli = new ArrayList<>();
+            ruoli.add(new SimpleGrantedAuthority("ROLE_" + utente.getRuolo().name()));
 
-        // dico a Spring Security chi e l'utente autenticato
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(utente, null, ruoli);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            // dico a Spring Security chi e l'utente autenticato
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(utente, null, ruoli);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        } catch (Exception e) {
+            // token scaduto o non valido: non autentico, la richiesta verra rifiutata con 403
+            System.out.println("Token non valido: " + e.getMessage());
+        }
 
         // proseguo con la richiesta
         filterChain.doFilter(request, response);
