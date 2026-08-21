@@ -48,4 +48,21 @@ public class RawgService {
             return null;
         }
     }
+
+    // giochi piu popolari (per la schermata di login, senza autenticazione)
+    public List<RawgGiocoDTO> getPopolari() {
+        try {
+            String url = "https://api.rawg.io/api/games?key=" + apiKey + "&ordering=-added&page_size=40";
+            RawgRispostaDTO risposta = restTemplate.getForObject(url, RawgRispostaDTO.class);
+
+            if (risposta == null || risposta.getResults() == null) {
+                return new ArrayList<>();
+            }
+            return risposta.getResults();
+
+        } catch (Exception e) {
+            System.out.println("Errore RAWG popolari: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
 }

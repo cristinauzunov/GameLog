@@ -28,4 +28,10 @@ public class GiocoController {
     public RawgDettaglioDTO dettaglio(@PathVariable Long id) {
         return rawgService.getDettaglio(id);
     }
+
+    // giochi popolari (pubblico)
+    @GetMapping("/popolari")
+    public List<RawgGiocoDTO> popolari() {
+        return rawgService.getPopolari();
+    }
 }

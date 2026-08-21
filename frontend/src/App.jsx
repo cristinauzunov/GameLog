@@ -2,10 +2,10 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Registrazione from "./pages/Registrazione";
 import Collezione from "./pages/Collezione";
-import Navbar from "./components/Navbar";
-import RottaProtetta from "./components/RottaProtetta";
 import Cerca from "./pages/Cerca";
 import DettaglioGioco from "./pages/DettaglioGioco";
+import Navbar from "./components/Navbar";
+import RottaProtetta from "./components/RottaProtetta";
 
 function App() {
   return (
@@ -18,7 +18,9 @@ function App() {
           path="/"
           element={
             <RottaProtetta>
-              <Collezione />
+              <div className="contenuto">
+                <Collezione />
+              </div>
             </RottaProtetta>
           }
         />
@@ -26,7 +28,9 @@ function App() {
           path="/cerca"
           element={
             <RottaProtetta>
-              <Cerca />
+              <div className="contenuto">
+                <Cerca />
+              </div>
             </RottaProtetta>
           }
         />
@@ -34,7 +38,9 @@ function App() {
           path="/gioco/:id"
           element={
             <RottaProtetta>
-              <DettaglioGioco />
+              <div className="contenuto">
+                <DettaglioGioco />
+              </div>
             </RottaProtetta>
           }
         />

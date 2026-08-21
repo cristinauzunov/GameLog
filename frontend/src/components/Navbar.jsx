@@ -1,12 +1,7 @@
 import { useContext } from "react";
-import {
-  Navbar as NavbarBootstrap,
-  Nav,
-  Container,
-  Button,
-} from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import "../layout.css";
 
 function Navbar() {
   const { token, logout } = useContext(AuthContext);
@@ -17,33 +12,48 @@ function Navbar() {
     navigate("/login");
   }
 
-  // se non sei loggata, non mostro la navbar
+  // se non sei loggata, non mostro la sidebar
   if (!token) {
     return null;
   }
 
   return (
-    <NavbarBootstrap bg="dark" variant="dark" expand="lg">
-      <Container>
-        <NavbarBootstrap.Brand as={Link} to="/">
-          GameLog
-        </NavbarBootstrap.Brand>
-        <NavbarBootstrap.Toggle />
-        <NavbarBootstrap.Collapse>
-          <Nav className="ms-auto">
-            <Nav.Link as={Link} to="/">
-              La mia collezione
-            </Nav.Link>
-            <Nav.Link as={Link} to="/cerca">
-              Cerca giochi
-            </Nav.Link>
-            <Button variant="outline-light" onClick={faiLogout}>
-              Logout
-            </Button>
-          </Nav>
-        </NavbarBootstrap.Collapse>
-      </Container>
-    </NavbarBootstrap>
+    <div className="sidebar">
+      <div className="sidebar-logo">GameLog</div>
+
+      <NavLink
+        to="/"
+        end
+        className={({ isActive }) =>
+          "sidebar-link" + (isActive ? " attivo" : "")
+        }
+      >
+        La mia collezione
+      </NavLink>
+
+      <NavLink
+        to="/cerca"
+        className={({ isActive }) =>
+          "sidebar-link" + (isActive ? " attivo" : "")
+        }
+      >
+        Cerca giochi
+      </NavLink>
+
+      <button
+        className="sidebar-link"
+        onClick={faiLogout}
+        style={{
+          background: "none",
+          border: "none",
+          width: "100%",
+          textAlign: "left",
+          cursor: "pointer",
+        }}
+      >
+        Logout
+      </button>
+    </div>
   );
 }
 
