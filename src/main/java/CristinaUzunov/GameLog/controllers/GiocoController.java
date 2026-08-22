@@ -34,4 +34,16 @@ public class GiocoController {
     public List<RawgGiocoDTO> popolari() {
         return rawgService.getPopolari();
     }
+
+    // nuove uscite
+    @GetMapping("/nuove-uscite")
+    public List<RawgGiocoDTO> nuoveUscite() {
+        return rawgService.getNuoveUscite();
+    }
+
+    // giochi per genere
+    @GetMapping("/genere/{genere}")
+    public List<RawgGiocoDTO> perGenere(@PathVariable String genere) {
+        return rawgService.getPerGenere(genere);
+    }
 }

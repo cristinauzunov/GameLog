@@ -1,0 +1,63 @@
+/* fila orizzontale di giochi */
+.collezione-fila {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    padding: 40px 10px;
+    align-items: center;
+}
+
+/* singola card nella fila */
+.collezione-card {
+    flex: 0 0 auto;
+    width: 150px;
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.6;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+.collezione-card:hover {
+    opacity: 1;
+}
+
+/* card selezionata, ingrandita al centro */
+.collezione-card.evidenza {
+    transform: scale(1.2);
+    opacity: 1;
+    z-index: 2;
+}
+
+.collezione-cover {
+    width: 150px;
+    height: 210px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* copertina mancante */
+.collezione-cover-vuota {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2a2f36;
+    color: #aaa;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 10px;
+}
+
+.collezione-card-titolo {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #ddd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dettaglio-cover {
+    width: 100%;
+    border-radius: 10px;
+}

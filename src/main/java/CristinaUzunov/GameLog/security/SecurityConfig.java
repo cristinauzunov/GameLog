@@ -35,6 +35,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/giochi/popolari").permitAll()
+                .requestMatchers("/giochi/nuove-uscite").permitAll()
+                .requestMatchers("/giochi/genere/**").permitAll()
                 .anyRequest().authenticated());
 
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);

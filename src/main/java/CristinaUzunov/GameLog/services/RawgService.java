@@ -65,4 +65,37 @@ public class RawgService {
             return new ArrayList<>();
         }
     }
+    // nuove uscite: giochi ordinati per data di uscita piu recente
+    public List<RawgGiocoDTO> getNuoveUscite() {
+        try {
+            String url = "https://api.rawg.io/api/games?key=" + apiKey + "&ordering=-released&page_size=12";
+            RawgRispostaDTO risposta = restTemplate.getForObject(url, RawgRispostaDTO.class);
+
+            if (risposta == null || risposta.getResults() == null) {
+                return new ArrayList<>();
+            }
+            return risposta.getResults();
+
+        } catch (Exception e) {
+            System.out.println("Errore RAWG nuove uscite: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    // giochi di un genere specifico (es. action, role-playing-games)
+    public List<RawgGiocoDTO> getPerGenere(String genere) {
+        try {
+            String url = "https://api.rawg.io/api/games?key=" + apiKey + "&genres=" + genere + "&page_size=40";
+            RawgRispostaDTO risposta = restTemplate.getForObject(url, RawgRispostaDTO.class);
+
+            if (risposta == null || risposta.getResults() == null) {
+                return new ArrayList<>();
+            }
+            return risposta.getResults();
+
+        } catch (Exception e) {
+            System.out.println("Errore RAWG genere: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
 }

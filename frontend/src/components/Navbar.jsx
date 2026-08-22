@@ -28,6 +28,15 @@ function Navbar() {
           "sidebar-link" + (isActive ? " attivo" : "")
         }
       >
+        Home
+      </NavLink>
+
+      <NavLink
+        to="/collezione"
+        className={({ isActive }) =>
+          "sidebar-link" + (isActive ? " attivo" : "")
+        }
+      >
         La mia collezione
       </NavLink>
 
@@ -40,6 +49,14 @@ function Navbar() {
         Cerca giochi
       </NavLink>
 
+      <NavLink
+        to="/statistiche"
+        className={({ isActive }) =>
+          "sidebar-link" + (isActive ? " attivo" : "")
+        }
+      >
+        Statistiche
+      </NavLink>
       <button
         className="sidebar-link"
         onClick={faiLogout}

@@ -1,11 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Registrazione from "./pages/Registrazione";
+import Home from "./pages/Home";
 import Collezione from "./pages/Collezione";
 import Cerca from "./pages/Cerca";
 import DettaglioGioco from "./pages/DettaglioGioco";
+import DettaglioVoce from "./pages/DettaglioVoce";
+import Statistiche from "./pages/Statistiche";
 import Navbar from "./components/Navbar";
 import RottaProtetta from "./components/RottaProtetta";
+import Categoria from "./pages/Categoria";
 
 function App() {
   return (
@@ -14,8 +18,20 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/registrazione" element={<Registrazione />} />
+
         <Route
           path="/"
+          element={
+            <RottaProtetta>
+              <div className="contenuto">
+                <Home />
+              </div>
+            </RottaProtetta>
+          }
+        />
+
+        <Route
+          path="/collezione"
           element={
             <RottaProtetta>
               <div className="contenuto">
@@ -24,6 +40,18 @@ function App() {
             </RottaProtetta>
           }
         />
+
+        <Route
+          path="/collezione/:id"
+          element={
+            <RottaProtetta>
+              <div className="contenuto">
+                <DettaglioVoce />
+              </div>
+            </RottaProtetta>
+          }
+        />
+
         <Route
           path="/cerca"
           element={
@@ -34,12 +62,34 @@ function App() {
             </RottaProtetta>
           }
         />
+
         <Route
           path="/gioco/:id"
           element={
             <RottaProtetta>
               <div className="contenuto">
                 <DettaglioGioco />
+              </div>
+            </RottaProtetta>
+          }
+        />
+
+        <Route
+          path="/statistiche"
+          element={
+            <RottaProtetta>
+              <div className="contenuto">
+                <Statistiche />
+              </div>
+            </RottaProtetta>
+          }
+        />
+        <Route
+          path="/categoria/:codice"
+          element={
+            <RottaProtetta>
+              <div className="contenuto">
+                <Categoria />
               </div>
             </RottaProtetta>
           }
