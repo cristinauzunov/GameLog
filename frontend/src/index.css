@@ -8,3 +8,28 @@ body {
 a {
     color: #ff5b77;
 }
+
+.btn-stato {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid #4f46e5;
+    color: #b0b4ba;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-stato:hover {
+    background: #21262c;
+    color: #fff;
+}
+
+.btn-stato.attivo {
+    background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+    border-color: transparent;
+    color: #fff;
+}

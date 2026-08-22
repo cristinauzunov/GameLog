@@ -19,6 +19,7 @@ const generi = [
 function Home() {
   const [trending, setTrending] = useState([]);
   const [giochiPerGenere, setGiochiPerGenere] = useState({});
+  const [nomeUtente, setNomeUtente] = useState("");
   const [caricamento, setCaricamento] = useState(true);
 
   const navigate = useNavigate();
@@ -26,6 +27,13 @@ function Home() {
   useEffect(() => {
     async function caricaTutto() {
       try {
+        try {
+          const rispUtente = await api.get("/auth/me");
+          setNomeUtente(rispUtente.data.nome || rispUtente.data.username);
+        } catch {
+          setNomeUtente("");
+        }
+
         const chiamate = [api.get("/giochi/popolari")];
         for (let i = 0; i < generi.length; i++) {
           chiamate.push(api.get("/giochi/genere/" + generi[i].codice));
@@ -61,6 +69,13 @@ function Home() {
 
   return (
     <Container className="mt-4">
+      <div className="mb-4">
+        <h2 className="mb-1">
+          Welcome back{nomeUtente ? ", " + nomeUtente : ""}
+        </h2>
+        <p className="text-muted">La tua collezione ti sta aspettando</p>
+      </div>
+
       {giocoBanner && giocoBanner.background_image && (
         <div
           className="home-banner"

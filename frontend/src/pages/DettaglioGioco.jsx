@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Button, Form, Alert, Spinner, Card } from "react-bootstrap";
+import { Container, Row, Col, Form, Alert, Spinner, Card } from "react-bootstrap";
+import { Bookmark, PlayFill, CheckCircleFill, XCircleFill } from "react-bootstrap-icons";
 import api from "../api";
 
 function DettaglioGioco() {
@@ -16,7 +17,12 @@ function DettaglioGioco() {
     const [note, setNote] = useState("");
     const [errore, setErrore] = useState("");
 
-    const stati = ["DA_GIOCARE", "IN_CORSO", "FINITO", "ABBANDONATO"];
+    const stati = [
+        { codice: "DA_GIOCARE", etichetta: "Da giocare", icona: <Bookmark /> },
+        { codice: "IN_CORSO", etichetta: "In corso", icona: <PlayFill /> },
+        { codice: "FINITO", etichetta: "Finito", icona: <CheckCircleFill /> },
+        { codice: "ABBANDONATO", etichetta: "Abbandonato", icona: <XCircleFill /> },
+    ];
 
     useEffect(() => {
         async function caricaGioco() {
@@ -65,12 +71,13 @@ function DettaglioGioco() {
         return (
             <Container className="mt-4">
                 <p>Gioco non trovato.</p>
-                <Button onClick={() => navigate("/cerca")}>Torna alla ricerca</Button>
+                <button type="button" className="btn-gamelog" onClick={() => navigate("/cerca")}>
+                    Torna alla ricerca
+                </button>
             </Container>
         );
     }
 
-    // stelline cliccabili
     const stelline = [];
     for (let i = 1; i <= 10; i++) {
         stelline.push(
@@ -91,8 +98,6 @@ function DettaglioGioco() {
     return (
         <Container className="mt-4 mb-5">
             <Row className="align-items-start">
-
-                {/* SINISTRA - copertina + pannello, si fissa quando scorri */}
                 <Col md={4}>
                     <div style={{ position: "sticky", top: "20px" }}>
                         {gioco.background_image && (
@@ -112,15 +117,14 @@ function DettaglioGioco() {
                                 <p className="mb-1 mt-3">Stato</p>
                                 <div className="mb-3">
                                     {stati.map((s) => (
-                                        <Button
-                                            key={s}
-                                            variant={stato === s ? "primary" : "outline-primary"}
-                                            className="me-2 mb-2"
-                                            size="sm"
-                                            onClick={() => setStato(s)}
+                                        <button
+                                            key={s.codice}
+                                            type="button"
+                                            className={"btn-stato me-2 mb-2" + (stato === s.codice ? " attivo" : "")}
+                                            onClick={() => setStato(s.codice)}
                                         >
-                                            {s}
-                                        </Button>
+                                            {s.icona} {s.etichetta}
+                                        </button>
                                     ))}
                                 </div>
 
@@ -147,15 +151,14 @@ function DettaglioGioco() {
                                     onChange={(e) => setNote(e.target.value)}
                                 />
 
-                                <Button variant="success" className="w-100" onClick={aggiungi}>
+                                <button type="button" className="btn-gamelog w-100" onClick={aggiungi}>
                                     Aggiungi alla collezione
-                                </Button>
+                                </button>
                             </Card.Body>
                         </Card>
                     </div>
                 </Col>
 
-                {/* DESTRA - titolo e descrizione, scorre */}
                 <Col md={8}>
                     <h2>{gioco.name}</h2>
                     <p className="text-muted">

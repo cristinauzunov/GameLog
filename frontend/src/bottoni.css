@@ -1,0 +1,61 @@
+
+.btn-gamelog {
+    background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+    border: none;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-gamelog:hover {
+    opacity: 0.9;
+    color: #fff;
+}
+
+
+.btn-gamelog-danger {
+    background: linear-gradient(90deg, #dc3545 0%, #b02a37 100%);
+    border: none;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-gamelog-danger:hover {
+    opacity: 0.9;
+    color: #fff;
+}
+
+/* versione piccola, per i pulsanti dentro le card */
+.btn-gamelog-sm,
+.btn-gamelog-danger-sm {
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-gamelog-sm {
+    background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+.btn-gamelog-danger-sm {
+    background: linear-gradient(90deg, #dc3545 0%, #b02a37 100%);
+}
+
+.btn-gamelog-sm:hover,
+.btn-gamelog-danger-sm:hover {
+    opacity: 0.9;
+    color: #fff;
+}
+

@@ -1,32 +1,34 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Form, Row, Col, Card, Spinner } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
+import { Search, Controller } from "react-bootstrap-icons";
 import api from "../api";
+import "../cerca.css";
 
 function Cerca() {
   const [titolo, setTitolo] = useState("");
   const [risultati, setRisultati] = useState([]);
   const [caricamento, setCaricamento] = useState(false);
+  const [cercato, setCercato] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    // aspetto 400ms dopo l'ultima lettera prima di cercare
     const timer = setTimeout(() => {
       cercaGiochi();
-    }, 100);
+    }, 400);
 
-    // se l'utente scrive ancora, annullo la ricerca precedente
     return () => clearTimeout(timer);
 
     async function cercaGiochi() {
-      // se il campo e vuoto, svuoto i risultati e non cerco
       if (titolo.trim() === "") {
         setRisultati([]);
+        setCercato(false);
         return;
       }
 
       setCaricamento(true);
+      setCercato(true);
       try {
         const risposta = await api.get("/giochi/cerca?titolo=" + titolo);
         setRisultati(risposta.data);
@@ -37,17 +39,21 @@ function Cerca() {
       }
     }
   }, [titolo]);
+
   return (
     <Container className="mt-4">
       <h2 className="mb-4">Cerca giochi</h2>
 
-      <Form.Control
-        type="text"
-        placeholder="Scrivi il titolo di un gioco..."
-        value={titolo}
-        onChange={(e) => setTitolo(e.target.value)}
-        className="mb-4"
-      />
+      <div className="cerca-barra">
+        <Search className="cerca-icona" />
+        <input
+          type="text"
+          className="cerca-input"
+          placeholder="Scrivi il titolo di un gioco..."
+          value={titolo}
+          onChange={(e) => setTitolo(e.target.value)}
+        />
+      </div>
 
       {caricamento && (
         <div className="text-center mt-3 mb-3">
@@ -55,31 +61,46 @@ function Cerca() {
         </div>
       )}
 
-      <Row>
+      {!caricamento && !cercato && (
+        <div className="cerca-vuoto">
+          <div className="cerca-vuoto-icona">
+            <Controller />
+          </div>
+          <p>Cerca un gioco per aggiungerlo alla tua collezione</p>
+        </div>
+      )}
+
+      {!caricamento && cercato && risultati.length === 0 && (
+        <div className="cerca-vuoto">
+          <p>Nessun gioco trovato. Prova con un altro titolo.</p>
+        </div>
+      )}
+
+      <div className="cerca-griglia">
         {risultati.map((gioco) => (
-          <Col key={gioco.id} md={4} className="mb-4">
-            <Card
-              onClick={() => navigate("/gioco/" + gioco.id)}
-              style={{ cursor: "pointer" }}
-              className="h-100"
-            >
-              {gioco.background_image && (
-                <Card.Img
-                  variant="top"
-                  src={gioco.background_image}
-                  style={{ height: "180px", objectFit: "cover" }}
-                />
-              )}
-              <Card.Body>
-                <Card.Title>{gioco.name}</Card.Title>
-                <Card.Text>
-                  Uscita: {gioco.released ? gioco.released : "-"}
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
+          <div
+            key={gioco.id}
+            className="cerca-card"
+            onClick={() => navigate("/gioco/" + gioco.id)}
+          >
+            {gioco.background_image ? (
+              <img
+                src={gioco.background_image}
+                alt={gioco.name}
+                className="cerca-card-cover"
+              />
+            ) : (
+              <div className="cerca-card-cover-vuota">{gioco.name}</div>
+            )}
+            <div className="cerca-card-corpo">
+              <div className="cerca-card-titolo">{gioco.name}</div>
+              <div className="cerca-card-data">
+                {gioco.released ? gioco.released : "-"}
+              </div>
+            </div>
+          </div>
         ))}
-      </Row>
+      </div>
     </Container>
   );
 }

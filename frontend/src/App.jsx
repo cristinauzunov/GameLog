@@ -10,6 +10,7 @@ import Statistiche from "./pages/Statistiche";
 import Navbar from "./components/Navbar";
 import RottaProtetta from "./components/RottaProtetta";
 import Categoria from "./pages/Categoria";
+import Profilo from "./pages/Profilo";
 
 function App() {
   return (
@@ -90,6 +91,16 @@ function App() {
             <RottaProtetta>
               <div className="contenuto">
                 <Categoria />
+              </div>
+            </RottaProtetta>
+          }
+        />
+        <Route
+          path="/profilo"
+          element={
+            <RottaProtetta>
+              <div className="contenuto">
+                <Profilo />
               </div>
             </RottaProtetta>
           }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Button, Form, Spinner, Alert } from "react-bootstrap";
+import { Container, Row, Col, Form, Spinner, Alert } from "react-bootstrap";
+import { Bookmark, PlayFill, CheckCircleFill, XCircleFill } from "react-bootstrap-icons";
 import api from "../api";
 
 function DettaglioVoce() {
@@ -17,9 +18,13 @@ function DettaglioVoce() {
     const [ore, setOre] = useState("");
     const [note, setNote] = useState("");
 
-    const stati = ["DA_GIOCARE", "IN_CORSO", "FINITO", "ABBANDONATO"];
+    const stati = [
+        { codice: "DA_GIOCARE", etichetta: "Da giocare", icona: <Bookmark /> },
+        { codice: "IN_CORSO", etichetta: "In corso", icona: <PlayFill /> },
+        { codice: "FINITO", etichetta: "Finito", icona: <CheckCircleFill /> },
+        { codice: "ABBANDONATO", etichetta: "Abbandonato", icona: <XCircleFill /> },
+    ];
 
-    // carico la collezione e trovo la voce con questo id
     useEffect(() => {
         async function carica() {
             try {
@@ -83,7 +88,9 @@ function DettaglioVoce() {
         return (
             <Container className="mt-4">
                 <p>Gioco non trovato in collezione.</p>
-                <Button onClick={() => navigate("/collezione")}>Torna alla collezione</Button>
+                <button type="button" className="btn-gamelog" onClick={() => navigate("/collezione")}>
+                    Torna alla collezione
+                </button>
             </Container>
         );
     }
@@ -132,15 +139,14 @@ function DettaglioVoce() {
                     <p className="mb-1 mt-3">Stato</p>
                     <div className="mb-3">
                         {stati.map((s) => (
-                            <Button
-                                key={s}
-                                variant={stato === s ? "primary" : "outline-primary"}
-                                className="me-2 mb-2"
-                                size="sm"
-                                onClick={() => setStato(s)}
+                            <button
+                                key={s.codice}
+                                type="button"
+                                className={"btn-stato me-2 mb-2" + (stato === s.codice ? " attivo" : "")}
+                                onClick={() => setStato(s.codice)}
                             >
-                                {s}
-                            </Button>
+                                {s.icona} {s.etichetta}
+                            </button>
                         ))}
                     </div>
 
@@ -168,12 +174,12 @@ function DettaglioVoce() {
                         onChange={(e) => setNote(e.target.value)}
                     />
 
-                    <Button variant="success" className="me-2" onClick={salva}>
+                    <button type="button" className="btn-gamelog me-2" onClick={salva}>
                         Salva modifiche
-                    </Button>
-                    <Button variant="outline-danger" onClick={elimina}>
+                    </button>
+                    <button type="button" className="btn-gamelog-danger" onClick={elimina}>
                         Elimina dalla collezione
-                    </Button>
+                    </button>
                 </Col>
             </Row>
         </Container>

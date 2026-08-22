@@ -33,7 +33,8 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/auth/register").permitAll()
+                .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/giochi/popolari").permitAll()
                 .requestMatchers("/giochi/nuove-uscite").permitAll()
                 .requestMatchers("/giochi/genere/**").permitAll()
@@ -44,10 +45,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
