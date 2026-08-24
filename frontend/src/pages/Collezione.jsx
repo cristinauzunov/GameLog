@@ -1,6 +1,19 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Form, Spinner, Alert } from "react-bootstrap";
-import { Bookmark, PlayFill, CheckCircleFill, XCircleFill } from "react-bootstrap-icons";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Spinner,
+  Alert,
+} from "react-bootstrap";
+import {
+  Bookmark,
+  PlayFill,
+  CheckCircleFill,
+  XCircleFill,
+} from "react-bootstrap-icons";
 import api from "../api";
 import "../collezione.css";
 
@@ -10,18 +23,30 @@ function Collezione() {
   const [errore, setErrore] = useState("");
   const [messaggio, setMessaggio] = useState("");
 
+  const [filtroStato, setFiltroStato] = useState("TUTTI");
+  const [ordinamento, setOrdinamento] = useState("titolo");
+
   const [voceSelezionata, setVoceSelezionata] = useState(null);
   const [statoMod, setStatoMod] = useState("");
   const [votoMod, setVotoMod] = useState(0);
   const [oreMod, setOreMod] = useState("");
   const [noteMod, setNoteMod] = useState("");
   const [descrizione, setDescrizione] = useState("");
+  const [ricerca, setRicerca] = useState("");
 
   const stati = [
     { codice: "DA_GIOCARE", etichetta: "Da giocare", icona: <Bookmark /> },
     { codice: "IN_CORSO", etichetta: "In corso", icona: <PlayFill /> },
     { codice: "FINITO", etichetta: "Finito", icona: <CheckCircleFill /> },
     { codice: "ABBANDONATO", etichetta: "Abbandonato", icona: <XCircleFill /> },
+  ];
+
+  const filtri = [
+    { codice: "TUTTI", etichetta: "Tutti" },
+    { codice: "DA_GIOCARE", etichetta: "Da giocare" },
+    { codice: "IN_CORSO", etichetta: "In corso" },
+    { codice: "FINITO", etichetta: "Finito" },
+    { codice: "ABBANDONATO", etichetta: "Abbandonato" },
   ];
 
   async function seleziona(voce) {
@@ -99,6 +124,35 @@ function Collezione() {
     );
   }
 
+    const vociFiltrate = [];
+  for (let i = 0; i < voci.length; i++) {
+    const passaStato = filtroStato === "TUTTI" || voci[i].stato === filtroStato;
+    const titoloMinuscolo = voci[i].gioco.titolo.toLowerCase();
+    const passaRicerca = titoloMinuscolo.indexOf(ricerca.toLowerCase()) !== -1;
+
+    if (passaStato && passaRicerca) {
+      vociFiltrate.push(voci[i]);
+    }
+  }
+
+  const vociOrdinate = vociFiltrate.slice();
+  vociOrdinate.sort(function (a, b) {
+    if (ordinamento === "titolo") {
+      return a.gioco.titolo.localeCompare(b.gioco.titolo);
+    }
+    if (ordinamento === "voto") {
+      const votoA = a.voto !== null ? a.voto : 0;
+      const votoB = b.voto !== null ? b.voto : 0;
+      return votoB - votoA;
+    }
+    if (ordinamento === "ore") {
+      const oreA = a.oreGiocate !== null ? a.oreGiocate : 0;
+      const oreB = b.oreGiocate !== null ? b.oreGiocate : 0;
+      return oreB - oreA;
+    }
+    return 0;
+  });
+
   const stelline = [];
   for (let i = 1; i <= 10; i++) {
     stelline.push(
@@ -118,7 +172,7 @@ function Collezione() {
 
   return (
     <Container className="mt-4">
-      <h2 className="mb-2">La mia collezione</h2>
+      <h2 className="mb-3">La mia collezione</h2>
 
       {errore && <p className="text-danger">{errore}</p>}
 
@@ -126,35 +180,71 @@ function Collezione() {
         <p>La tua collezione e ancora vuota.</p>
       ) : (
         <>
-          <div className="collezione-fila">
-            {voci.map((voce) => (
-              <div
-                key={voce.id}
+          <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
+            {filtri.map((f) => (
+              <button
+                key={f.codice}
+                type="button"
                 className={
-                  "collezione-card" +
-                  (voceSelezionata && voceSelezionata.id === voce.id
-                    ? " evidenza"
-                    : "")
+                  "btn-stato" + (filtroStato === f.codice ? " attivo" : "")
                 }
-                onClick={() => seleziona(voce)}
+                onClick={() => setFiltroStato(f.codice)}
               >
-                {voce.gioco.copertina ? (
-                  <img
-                    src={voce.gioco.copertina}
-                    alt={voce.gioco.titolo}
-                    className="collezione-cover"
-                  />
-                ) : (
-                  <div className="collezione-cover collezione-cover-vuota">
+                {f.etichetta}
+              </button>
+            ))}
+
+            <Form.Select
+              style={{ maxWidth: "200px", marginLeft: "auto" }}
+              value={ordinamento}
+              onChange={(e) => setOrdinamento(e.target.value)}
+            >
+              <option value="titolo">Ordina per titolo</option>
+              <option value="voto">Ordina per voto</option>
+              <option value="ore">Ordina per ore giocate</option>
+            </Form.Select>
+            <Form.Control
+              type="text"
+              placeholder="Cerca nella collezione..."
+              style={{ maxWidth: "220px" }}
+              value={ricerca}
+              onChange={(e) => setRicerca(e.target.value)}
+            />
+          </div>
+
+          {vociOrdinate.length === 0 ? (
+            <p className="text-muted">Nessun gioco in questo stato.</p>
+          ) : (
+            <div className="collezione-fila">
+              {vociOrdinate.map((voce) => (
+                <div
+                  key={voce.id}
+                  className={
+                    "collezione-card" +
+                    (voceSelezionata && voceSelezionata.id === voce.id
+                      ? " evidenza"
+                      : "")
+                  }
+                  onClick={() => seleziona(voce)}
+                >
+                  {voce.gioco.copertina ? (
+                    <img
+                      src={voce.gioco.copertina}
+                      alt={voce.gioco.titolo}
+                      className="collezione-cover"
+                    />
+                  ) : (
+                    <div className="collezione-cover collezione-cover-vuota">
+                      {voce.gioco.titolo}
+                    </div>
+                  )}
+                  <div className="collezione-card-titolo">
                     {voce.gioco.titolo}
                   </div>
-                )}
-                <div className="collezione-card-titolo">
-                  {voce.gioco.titolo}
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {voceSelezionata && (
             <Card className="mt-3">
@@ -170,7 +260,7 @@ function Collezione() {
                     )}
                   </Col>
 
-                  <Col md={8}>
+                  <Col md={8} className="mt-4 mt-md-0">
                     <h3>{voceSelezionata.gioco.titolo}</h3>
                     <p className="text-muted">
                       {voceSelezionata.gioco.piattaforma && (
@@ -207,7 +297,10 @@ function Collezione() {
                         <button
                           key={s.codice}
                           type="button"
-                          className={"btn-stato me-2 mb-2" + (statoMod === s.codice ? " attivo" : "")}
+                          className={
+                            "btn-stato me-2 mb-2" +
+                            (statoMod === s.codice ? " attivo" : "")
+                          }
                           onClick={() => setStatoMod(s.codice)}
                         >
                           {s.icona} {s.etichetta}
@@ -218,7 +311,9 @@ function Collezione() {
                     <p className="mb-1">Voto</p>
                     <div className="mb-3">
                       {stelline}
-                      {votoMod > 0 && <span className="ms-2">{votoMod}/10</span>}
+                      {votoMod > 0 && (
+                        <span className="ms-2">{votoMod}/10</span>
+                      )}
                     </div>
 
                     <p className="mb-1">Ore giocate</p>
@@ -239,7 +334,11 @@ function Collezione() {
                       onChange={(e) => setNoteMod(e.target.value)}
                     />
 
-                    <button type="button" className="btn-gamelog me-2" onClick={salvaModifica}>
+                    <button
+                      type="button"
+                      className="btn-gamelog me-2"
+                      onClick={salvaModifica}
+                    >
                       Salva modifiche
                     </button>
                   </Col>

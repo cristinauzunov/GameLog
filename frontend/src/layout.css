@@ -112,22 +112,21 @@
     background-color: #14181c;
 }
 
-/* pulsante hamburger: nascosto su desktop */
 .hamburger {
     display: none;
     position: fixed;
-    top: 12px;
-    left: 12px;
+    top: 14px;
+    left: 14px;
     z-index: 1100;
-    background-color: #16191d;
-    border: 1px solid #2a2f36;
+    background: none;
+    border: none;
     color: #fff;
-    font-size: 1.3rem;
-    border-radius: 8px;
-    padding: 6px 12px;
+    font-size: 1.5rem;
     cursor: pointer;
+    padding: 0;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8));
+    transition: opacity 0.3s, transform 0.3s;
 }
-
 .sidebar-overlay {
     display: none;
 }
@@ -175,19 +174,22 @@
 .indietro {
     display: none;
     position: fixed;
-    top: 12px;
-    left: 70px;
+    top: 14px;
+    left: 56px;
     z-index: 1100;
-    background-color: #16191d;
-    border: 1px solid #2a2f36;
+    background: none;
+    border: none;
     color: #fff;
-    font-size: 1.3rem;
-    border-radius: 8px;
-    padding: 6px 12px;
+    font-size: 1.5rem;
     cursor: pointer;
+    padding: 0;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8));
+    transition: opacity 0.3s, transform 0.3s;
 }
-
 @media (max-width: 768px) {
+    .hamburger {
+        display: block;
+    }
     .indietro {
         display: block;
     }
@@ -195,4 +197,16 @@
 
 .nascosto {
     display: none !important;
+}
+
+.scroll-nascosto {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.hamburger,
+.indietro {
+    transition: opacity 0.3s, transform 0.3s;
 }

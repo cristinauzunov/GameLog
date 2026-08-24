@@ -170,13 +170,11 @@ function Profilo() {
                             value={avatar}
                             onChange={(e) => setAvatar(e.target.value)}
                         />
-                        <Form.Text className="text-muted">
-                            Lascia vuoto per usare l'iniziale del nome.
-                        </Form.Text>
+                    
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                        <Form.Label>Oppure carica un'immagine dal PC</Form.Label>
+                        <Form.Label> carica un'immagine</Form.Label>
                         <Form.Control
                             type="file"
                             accept="image/*"
@@ -191,7 +189,7 @@ function Profilo() {
                         <Form.Label>Password attuale</Form.Label>
                         <Form.Control
                             type="password"
-                            placeholder="Necessaria solo per cambiare password"
+                            placeholder="Necessaria per cambiare password"
                             value={passwordAttuale}
                             onChange={(e) => setPasswordAttuale(e.target.value)}
                         />
@@ -201,7 +199,7 @@ function Profilo() {
                         <Form.Label>Nuova password</Form.Label>
                         <Form.Control
                             type="password"
-                            placeholder="Lascia vuoto per non cambiarla"
+                            
                             value={passwordNuova}
                             onChange={(e) => setPasswordNuova(e.target.value)}
                         />

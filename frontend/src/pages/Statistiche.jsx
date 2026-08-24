@@ -58,25 +58,25 @@ function Statistiche() {
       nome: "Da giocare",
       codice: "DA_GIOCARE",
       valore: stat.daGiocare,
-      colore: "#6c757d",
+      colore: "#6b7280",
     },
     {
       nome: "In corso",
       codice: "IN_CORSO",
       valore: stat.inCorso,
-      colore: "#0dcaf0",
+      colore: "#7c3aed",
     },
     {
       nome: "Finito",
       codice: "FINITO",
       valore: stat.finito,
-      colore: "#198754",
+      colore: "#4f46e5",
     },
     {
       nome: "Abbandonato",
       codice: "ABBANDONATO",
       valore: stat.abbandonato,
-      colore: "#dc3545",
+      colore: "#ec4899",
     },
   ];
 
@@ -105,16 +105,20 @@ function Statistiche() {
     <Container className="mt-4">
       <h2 className="mb-4">Le mie statistiche</h2>
 
-      {/* SCHEDE NUMERICHE */}
       <Row>
         <Col md={4} className="mb-4">
-          <Card className="text-center h-100">
+          <Card
+            className="text-center h-100"
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate("/collezione")}
+          >
             <Card.Body>
               <h1>{stat.totaleGiochi}</h1>
               <p className="text-muted mb-0">Giochi totali</p>
             </Card.Body>
           </Card>
         </Col>
+
         <Col md={4} className="mb-4">
           <Card className="text-center h-100">
             <Card.Body>
@@ -123,6 +127,7 @@ function Statistiche() {
             </Card.Body>
           </Card>
         </Col>
+
         <Col md={4} className="mb-4">
           <Card className="text-center h-100">
             <Card.Body>
@@ -133,7 +138,6 @@ function Statistiche() {
         </Col>
       </Row>
 
-      {/* GRAFICO A CIAMBELLA */}
       <Card className="mt-2">
         <Card.Body>
           <h4 className="mb-4">Giochi per stato</h4>
@@ -176,7 +180,6 @@ function Statistiche() {
         </Card.Body>
       </Card>
 
-      {/* LISTA GIOCHI DELLO STATO CLICCATO */}
       {statoScelto && (
         <Card className="mt-4">
           <Card.Body>

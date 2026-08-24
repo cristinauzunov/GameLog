@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   House,
@@ -16,6 +16,31 @@ function Navbar() {
   const { token, utente, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [aperta, setAperta] = useState(false);
+  const [barreVisibili, setBarreVisibili] = useState(true);
+  const timerScroll = useRef(null);
+
+  useEffect(() => {
+    function alloScroll() {
+      setBarreVisibili(false);
+
+      if (timerScroll.current) {
+        clearTimeout(timerScroll.current);
+      }
+
+      timerScroll.current = setTimeout(() => {
+        setBarreVisibili(true);
+      }, 300);
+    }
+
+    window.addEventListener("scroll", alloScroll);
+
+    return () => {
+      window.removeEventListener("scroll", alloScroll);
+      if (timerScroll.current) {
+        clearTimeout(timerScroll.current);
+      }
+    };
+  }, []);
 
   function faiLogout() {
     setAperta(false);
@@ -34,18 +59,27 @@ function Navbar() {
   return (
     <>
       <button
-        className={"hamburger" + (aperta ? " nascosto" : "")}
+        className={
+          "hamburger" +
+          (aperta ? " nascosto" : "") +
+          (!barreVisibili ? " scroll-nascosto" : "")
+        }
         onClick={() => setAperta(true)}
       >
         <List />
       </button>
 
       <button
-        className={"indietro" + (aperta ? " nascosto" : "")}
+        className={
+          "indietro" +
+          (aperta ? " nascosto" : "") +
+          (!barreVisibili ? " scroll-nascosto" : "")
+        }
         onClick={() => navigate(-1)}
       >
         <ArrowLeft />
       </button>
+
       <div
         className={"sidebar-overlay" + (aperta ? " attivo" : "")}
         onClick={() => setAperta(false)}
