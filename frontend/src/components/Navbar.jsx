@@ -9,14 +9,16 @@ import {
   List,
   ArrowLeft,
 } from "react-bootstrap-icons";
+import { Modal, Button } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
 import "../layout.css";
 
 function Navbar() {
-  const { token, utente, logout } = useContext(AuthContext);
+  const { token, utente, numeroGiochi, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [aperta, setAperta] = useState(false);
   const [barreVisibili, setBarreVisibili] = useState(true);
+  const [mostraLogout, setMostraLogout] = useState(false);
   const timerScroll = useRef(null);
 
   useEffect(() => {
@@ -43,6 +45,7 @@ function Navbar() {
   }, []);
 
   function faiLogout() {
+    setMostraLogout(false);
     setAperta(false);
     logout();
     navigate("/login");
@@ -120,6 +123,9 @@ function Navbar() {
           }
         >
           <Controller /> La mia collezione
+          {numeroGiochi > 0 && (
+            <span className="sidebar-badge">{numeroGiochi}</span>
+          )}
         </NavLink>
 
         <NavLink
@@ -134,7 +140,10 @@ function Navbar() {
 
         <div className="sidebar-sezione">Altro</div>
 
-        <button className="sidebar-link logout" onClick={faiLogout}>
+        <button
+          className="sidebar-link logout"
+          onClick={() => setMostraLogout(true)}
+        >
           <BoxArrowRight /> Logout
         </button>
 
@@ -179,6 +188,25 @@ function Navbar() {
           </div>
         </div>
       </div>
+
+      <Modal show={mostraLogout} onHide={() => setMostraLogout(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Esci da GameLog</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Vuoi davvero uscire dal tuo account?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setMostraLogout(false)}>
+            Annulla
+          </Button>
+          <button
+            type="button"
+            className="btn-gamelog-danger"
+            onClick={faiLogout}
+          >
+            Esci
+          </button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

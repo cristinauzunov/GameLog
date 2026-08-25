@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Spinner } from "react-bootstrap";
-import { Search, Controller } from "react-bootstrap-icons";
+import { Container } from "react-bootstrap";
+import { Search } from "react-bootstrap-icons";
 import api from "../api";
+import Spinner8bit from "../components/Spinner8bit";
 import "../cerca.css";
 
 function Cerca() {
@@ -57,17 +58,10 @@ function Cerca() {
         </div>
       </div>
 
-      {caricamento && (
-        <div className="text-center mt-3 mb-3">
-          <Spinner animation="border" />
-        </div>
-      )}
+      {caricamento && <Spinner8bit />}
 
       {!caricamento && !cercato && (
         <div className="cerca-vuoto">
-          <div className="cerca-vuoto-icona">
-            <Controller />
-          </div>
           <p>Cerca un gioco per aggiungerlo alla tua collezione</p>
         </div>
       )}

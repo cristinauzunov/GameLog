@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   Container,
   Row,
@@ -6,6 +6,8 @@ import {
   Card,
   Form,
   Alert,
+  Modal,
+  Button,
 } from "react-bootstrap";
 import {
   Bookmark,
@@ -14,10 +16,13 @@ import {
   XCircleFill,
 } from "react-bootstrap-icons";
 import api from "../api";
-import "../collezione.css";
 import Spinner8bit from "../components/Spinner8bit";
+import { AuthContext } from "../context/AuthContext";
+import "../collezione.css";
 
 function Collezione() {
+  const { caricaNumeroGiochi } = useContext(AuthContext);
+
   const [voci, setVoci] = useState([]);
   const [caricamento, setCaricamento] = useState(true);
   const [errore, setErrore] = useState("");
@@ -25,6 +30,7 @@ function Collezione() {
 
   const [filtroStato, setFiltroStato] = useState("TUTTI");
   const [ordinamento, setOrdinamento] = useState("titolo");
+  const [ricerca, setRicerca] = useState("");
 
   const [voceSelezionata, setVoceSelezionata] = useState(null);
   const [statoMod, setStatoMod] = useState("");
@@ -32,7 +38,7 @@ function Collezione() {
   const [oreMod, setOreMod] = useState("");
   const [noteMod, setNoteMod] = useState("");
   const [descrizione, setDescrizione] = useState("");
-  const [ricerca, setRicerca] = useState("");
+  const [mostraConferma, setMostraConferma] = useState(false);
 
   const stati = [
     { codice: "DA_GIOCARE", etichetta: "Da giocare", icona: <Bookmark /> },
@@ -116,6 +122,25 @@ function Collezione() {
     }
   }
 
+  async function elimina() {
+    try {
+      await api.delete("/collezione/" + voceSelezionata.id);
+
+      const nuovaLista = [];
+      for (let i = 0; i < voci.length; i++) {
+        if (voci[i].id !== voceSelezionata.id) {
+          nuovaLista.push(voci[i]);
+        }
+      }
+      setVoci(nuovaLista);
+      setVoceSelezionata(null);
+      setMostraConferma(false);
+      caricaNumeroGiochi();
+    } catch {
+      setErrore("Errore durante l'eliminazione");
+    }
+  }
+
   if (caricamento) {
     return (
       <Container className="mt-5 text-center">
@@ -194,6 +219,14 @@ function Collezione() {
               </button>
             ))}
 
+            <Form.Control
+              type="text"
+              placeholder="Cerca nella collezione..."
+              style={{ maxWidth: "220px" }}
+              value={ricerca}
+              onChange={(e) => setRicerca(e.target.value)}
+            />
+
             <Form.Select
               style={{ maxWidth: "200px", marginLeft: "auto" }}
               value={ordinamento}
@@ -203,17 +236,10 @@ function Collezione() {
               <option value="voto">Ordina per voto</option>
               <option value="ore">Ordina per ore giocate</option>
             </Form.Select>
-            <Form.Control
-              type="text"
-              placeholder="Cerca nella collezione..."
-              style={{ maxWidth: "220px" }}
-              value={ricerca}
-              onChange={(e) => setRicerca(e.target.value)}
-            />
           </div>
 
           {vociOrdinate.length === 0 ? (
-            <p className="text-muted">Nessun gioco in questo stato.</p>
+            <p className="text-muted">Nessun gioco trovato.</p>
           ) : (
             <div className="collezione-fila">
               {vociOrdinate.map((voce) => (
@@ -341,6 +367,13 @@ function Collezione() {
                     >
                       Salva modifiche
                     </button>
+                    <button
+                      type="button"
+                      className="btn-gamelog-danger"
+                      onClick={() => setMostraConferma(true)}
+                    >
+                      Elimina
+                    </button>
                   </Col>
                 </Row>
               </Card.Body>
@@ -348,6 +381,37 @@ function Collezione() {
           )}
         </>
       )}
+
+      <Modal
+        show={mostraConferma}
+        onHide={() => setMostraConferma(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Conferma eliminazione</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {voceSelezionata && (
+            <>
+              Vuoi davvero eliminare{" "}
+              <strong>{voceSelezionata.gioco.titolo}</strong> dalla tua
+              collezione?
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setMostraConferma(false)}>
+            Annulla
+          </Button>
+          <button
+            type="button"
+            className="btn-gamelog-danger"
+            onClick={elimina}
+          >
+            Elimina
+          </button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }

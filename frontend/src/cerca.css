@@ -24,7 +24,7 @@
         transparent 270deg,
         transparent 360deg
     );
-    animation: giraAlone 4s linear infinite;
+    animation: giraAlone 12s linear infinite;
     z-index: 0;
 }
 

@@ -1,14 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Alert,
-  Spinner,
-  Card,
-} from "react-bootstrap";
+import { Container, Row, Col, Form, Alert, Card } from "react-bootstrap";
 import {
   Bookmark,
   PlayFill,
@@ -16,10 +8,13 @@ import {
   XCircleFill,
 } from "react-bootstrap-icons";
 import api from "../api";
+import Spinner8bit from "../components/Spinner8bit";
+import { AuthContext } from "../context/AuthContext";
 
 function DettaglioGioco() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { caricaNumeroGiochi } = useContext(AuthContext);
 
   const [gioco, setGioco] = useState(null);
   const [caricamento, setCaricamento] = useState(true);
@@ -66,6 +61,7 @@ function DettaglioGioco() {
         oreGiocate: oreGiocate !== "" ? parseInt(oreGiocate) : null,
         note: note,
       });
+      caricaNumeroGiochi();
       navigate("/");
     } catch {
       setErrore("Errore durante l'aggiunta alla collezione");
@@ -75,7 +71,7 @@ function DettaglioGioco() {
   if (caricamento) {
     return (
       <Container className="mt-5 text-center">
-        <Spinner animation="border" />
+        <Spinner8bit />
       </Container>
     );
   }

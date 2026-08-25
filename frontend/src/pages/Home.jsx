@@ -20,6 +20,7 @@ const generi = [
 function Home() {
   const [trending, setTrending] = useState([]);
   const [giochiPerGenere, setGiochiPerGenere] = useState({});
+  const [giocoBanner, setGiocoBanner] = useState(null);
   const [caricaTrending, setCaricaTrending] = useState(true);
 
   const navigate = useNavigate();
@@ -28,7 +29,11 @@ function Home() {
     async function caricaTrending2() {
       try {
         const risposta = await api.get("/giochi/popolari");
-        setTrending(risposta.data);
+        const lista = risposta.data;
+        setTrending(lista);
+        if (lista.length > 0) {
+          setGiocoBanner(lista[Math.floor(Math.random() * lista.length)]);
+        }
       } catch {
         setTrending([]);
       } finally {
@@ -60,8 +65,6 @@ function Home() {
       }
     }
   }, []);
-
-  const giocoBanner = trending.length > 0 ? trending[0] : null;
 
   return (
     <Container className="mt-4">
