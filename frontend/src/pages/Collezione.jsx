@@ -5,7 +5,6 @@ import {
   Col,
   Card,
   Form,
-  Spinner,
   Alert,
 } from "react-bootstrap";
 import {
@@ -16,6 +15,7 @@ import {
 } from "react-bootstrap-icons";
 import api from "../api";
 import "../collezione.css";
+import Spinner8bit from "../components/Spinner8bit";
 
 function Collezione() {
   const [voci, setVoci] = useState([]);
@@ -119,12 +119,12 @@ function Collezione() {
   if (caricamento) {
     return (
       <Container className="mt-5 text-center">
-        <Spinner animation="border" />
+        <Spinner8bit />
       </Container>
     );
   }
 
-    const vociFiltrate = [];
+  const vociFiltrate = [];
   for (let i = 0; i < voci.length; i++) {
     const passaStato = filtroStato === "TUTTI" || voci[i].stato === filtroStato;
     const titoloMinuscolo = voci[i].gioco.titolo.toLowerCase();

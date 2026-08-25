@@ -1,35 +1,66 @@
 body {
-    margin: 0;
-    min-height: 100vh;
-    background-color: #14181c;
-    color: #ffffff;
+  margin: 0;
+  min-height: 100vh;
+  background-color: #14181c;
+  color: #ffffff;
 }
 
 a {
-    color: #ff5b77;
+  color: #ff5b77;
 }
 
 .btn-stato {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: transparent;
-    border: 1px solid #4f46e5;
-    color: #b0b4ba;
-    padding: 6px 14px;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid #4f46e5;
+  color: #b0b4ba;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .btn-stato:hover {
-    background: #21262c;
-    color: #fff;
+  background: #21262c;
+  color: #fff;
 }
 
 .btn-stato.attivo {
-    background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
-    border-color: transparent;
-    color: #fff;
+  background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+  border-color: transparent;
+  color: #fff;
+}
+
+.cerca-card {
+    position: relative;
+    border: 2px solid transparent;
+}
+
+.cerca-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 2px;
+    background: linear-gradient(163deg, #ff00ff 0%, #7c3aed 100%);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.25s;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.cerca-card:hover::before {
+    opacity: 1;
+}
+
+.cerca-card:hover {
+    box-shadow: 0 0 25px 2px rgba(204, 0, 255, 0.3);
 }

@@ -45,14 +45,16 @@ function Cerca() {
       <h2 className="mb-4">Cerca giochi</h2>
 
       <div className="cerca-barra">
-        <Search className="cerca-icona" />
-        <input
-          type="text"
-          className="cerca-input"
-          placeholder="Scrivi il titolo di un gioco..."
-          value={titolo}
-          onChange={(e) => setTitolo(e.target.value)}
-        />
+        <div className="cerca-input-wrapper">
+          <Search className="cerca-icona" />
+          <input
+            type="text"
+            className="cerca-input"
+            placeholder="Scrivi il titolo di un gioco..."
+            value={titolo}
+            onChange={(e) => setTitolo(e.target.value)}
+          />
+        </div>
       </div>
 
       {caricamento && (

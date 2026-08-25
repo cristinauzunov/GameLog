@@ -11,6 +11,7 @@ import Navbar from "./components/Navbar";
 import RottaProtetta from "./components/RottaProtetta";
 import Categoria from "./pages/Categoria";
 import Profilo from "./pages/Profilo";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -106,6 +107,7 @@ function App() {
           }
         />
       </Routes>
+      <Footer />
     </>
   );
 }

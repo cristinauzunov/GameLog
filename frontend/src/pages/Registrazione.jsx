@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Form, Button, Alert } from "react-bootstrap";
 import api from "../api";
-import SfondoGiochi from "../components/SfondoGiochi";
 import "../auth.css";
 import { Google, Discord, Twitch } from "react-bootstrap-icons";
 
@@ -37,6 +36,8 @@ function Registrazione() {
 
   return (
     <div className="auth-container">
+      <div className="aurora-bg"></div>
+
       <div className="auth-form">
         <h1 className="mb-1">GameLog</h1>
         <p className="text-muted mb-4">Crea il tuo account</p>
@@ -87,6 +88,7 @@ function Registrazione() {
             Registrati
           </Button>
         </Form>
+
         <div className="auth-divisore">
           <span>oppure</span>
         </div>
@@ -107,8 +109,6 @@ function Registrazione() {
           Hai gia un account? <Link to="/login">Accedi</Link>
         </p>
       </div>
-
-      <SfondoGiochi />
     </div>
   );
 }

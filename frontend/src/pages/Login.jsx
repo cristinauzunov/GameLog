@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { Form, Button, Alert } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
 import api from "../api";
-import SfondoGiochi from "../components/SfondoGiochi";
 import "../auth.css";
 import { Google, Discord, Twitch } from "react-bootstrap-icons";
 
@@ -33,6 +32,8 @@ function Login() {
 
   return (
     <div className="auth-container">
+      <div className="aurora-bg"></div>
+
       <div className="auth-form">
         <h1 className="mb-1">GameLog</h1>
         <p className="text-muted mb-4">Accedi al tuo account</p>
@@ -64,6 +65,7 @@ function Login() {
             Accedi
           </Button>
         </Form>
+
         <div className="auth-divisore">
           <span>oppure</span>
         </div>
@@ -84,8 +86,6 @@ function Login() {
           Non hai un account? <Link to="/registrazione">Registrati</Link>
         </p>
       </div>
-
-      <SfondoGiochi />
     </div>
   );
 }

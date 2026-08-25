@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Spinner } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import api from "../api";
 import FilaGiochi from "../components/FilaGiochi";
 import FilaAuto from "../components/FilaAuto";
+import Spinner8bit from "../components/Spinner8bit";
 import "../home.css";
 
 const generi = [
@@ -19,63 +20,51 @@ const generi = [
 function Home() {
   const [trending, setTrending] = useState([]);
   const [giochiPerGenere, setGiochiPerGenere] = useState({});
-  const [nomeUtente, setNomeUtente] = useState("");
-  const [caricamento, setCaricamento] = useState(true);
+  const [caricaTrending, setCaricaTrending] = useState(true);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function caricaTutto() {
+    async function caricaTrending2() {
       try {
-        try {
-          const rispUtente = await api.get("/auth/me");
-          setNomeUtente(rispUtente.data.nome || rispUtente.data.username);
-        } catch {
-          setNomeUtente("");
-        }
-
-        const chiamate = [api.get("/giochi/popolari")];
-        for (let i = 0; i < generi.length; i++) {
-          chiamate.push(api.get("/giochi/genere/" + generi[i].codice));
-        }
-
-        const risultati = await Promise.all(chiamate);
-
-        setTrending(risultati[0].data);
-
-        const perGenere = {};
-        for (let i = 0; i < generi.length; i++) {
-          perGenere[generi[i].codice] = risultati[i + 1].data;
-        }
-        setGiochiPerGenere(perGenere);
+        const risposta = await api.get("/giochi/popolari");
+        setTrending(risposta.data);
       } catch {
-        //
+        setTrending([]);
       } finally {
-        setCaricamento(false);
+        setCaricaTrending(false);
       }
     }
-    caricaTutto();
+    caricaTrending2();
   }, []);
 
-  if (caricamento) {
-    return (
-      <Container className="mt-5 text-center">
-        <Spinner animation="border" />
-      </Container>
-    );
-  }
+  useEffect(() => {
+    for (let i = 0; i < generi.length; i++) {
+      caricaGenere(generi[i].codice);
+    }
+
+    async function caricaGenere(codice) {
+      try {
+        const risposta = await api.get("/giochi/genere/" + codice);
+        setGiochiPerGenere((precedenti) => {
+          const nuovo = { ...precedenti };
+          nuovo[codice] = risposta.data;
+          return nuovo;
+        });
+      } catch {
+        setGiochiPerGenere((precedenti) => {
+          const nuovo = { ...precedenti };
+          nuovo[codice] = [];
+          return nuovo;
+        });
+      }
+    }
+  }, []);
 
   const giocoBanner = trending.length > 0 ? trending[0] : null;
 
   return (
     <Container className="mt-4">
-      <div className="mb-4">
-        <h2 className="mb-1">
-          Welcome back{nomeUtente ? ", " + nomeUtente : ""}
-        </h2>
-        <p className="text-muted">La tua collezione ti sta aspettando</p>
-      </div>
-
       {giocoBanner && giocoBanner.background_image && (
         <div
           className="home-banner"
@@ -91,7 +80,11 @@ function Home() {
         </div>
       )}
 
-      <FilaAuto titolo="Trending del momento" giochi={trending} />
+      {caricaTrending ? (
+        <Spinner8bit />
+      ) : (
+        <FilaAuto titolo="Trending del momento" giochi={trending} />
+      )}
 
       {generi.map((g) => (
         <div key={g.codice}>
@@ -104,7 +97,11 @@ function Home() {
               vedi tutti ›
             </span>
           </h4>
-          <FilaGiochi giochi={(giochiPerGenere[g.codice] || []).slice(0, 5)} />
+          {giochiPerGenere[g.codice] ? (
+            <FilaGiochi giochi={giochiPerGenere[g.codice].slice(0, 5)} />
+          ) : (
+            <p className="text-muted">Caricamento...</p>
+          )}
         </div>
       ))}
     </Container>

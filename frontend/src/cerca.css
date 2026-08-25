@@ -1,34 +1,62 @@
 
 .cerca-barra {
     position: relative;
-    max-width: 600px;
-    margin: 0 auto 30px;
+    max-width: 500px;
+    margin: 0 auto 40px;
+    border-radius: 14px;
+    padding: 3px;
+    overflow: hidden;
+}
+
+.cerca-barra::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    transform: translate(-50%, -50%);
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        #7c3aed 90deg,
+        #ff00ff 180deg,
+        transparent 270deg,
+        transparent 360deg
+    );
+    animation: giraAlone 4s linear infinite;
+    z-index: 0;
+}
+
+@keyframes giraAlone {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.cerca-input-wrapper {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    background-color: #0a0a0f;
+    border-radius: 12px;
+    padding: 0 16px;
 }
 
 .cerca-icona {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6b7280;
+    color: #9ca3af;
     font-size: 1.1rem;
-    pointer-events: none;
+    flex-shrink: 0;
 }
 
 .cerca-input {
-    width: 100%;
-    background-color: #1a1f24 !important;
-    border: 1px solid #2a2f36 !important;
+    flex: 1;
+    background: transparent !important;
+    border: none !important;
     color: #fff !important;
-    padding: 12px 16px 12px 44px;
-    border-radius: 12px;
+    padding: 14px 12px;
     font-size: 1rem;
-}
-
-.cerca-input:focus {
-    outline: none;
-    border-color: #4f46e5 !important;
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 .cerca-input::placeholder {
@@ -43,16 +71,41 @@
 }
 
 .cerca-card {
+    position: relative;
     background-color: #1a1f24;
     border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.25s;
+    border: 2px solid transparent;
+}
+
+.cerca-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 2px;
+    background: linear-gradient(163deg, #ff00ff 0%, #7c3aed 100%);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.25s;
 }
 
 .cerca-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.cerca-card:hover::before {
+    opacity: 1;
+}
+
+.cerca-card:hover {
+    box-shadow: 0 0 25px 2px rgba(204, 0, 255, 0.3);
 }
 
 .cerca-card-cover {
