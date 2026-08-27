@@ -1,6 +1,8 @@
 .footer {
-    background-color: #16191d;
-    border-top: 1px solid #2a2f36;
+    background-color: rgba(204, 203, 203, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
     padding: 40px 30px 20px;
     margin-top: 60px;
 }
@@ -32,6 +34,8 @@
     font-size: 1.3rem;
     font-weight: bold;
     color: #fff;
+    font-family: "Rajdhani", sans-serif;
+    letter-spacing: 0.5px;
 }
 
 .footer-descrizione {
@@ -56,6 +60,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    transition: color 0.2s;
 }
 
 .footer-colonna a:hover {
@@ -66,7 +71,7 @@
     max-width: 1100px;
     margin: 30px auto 0;
     padding-top: 20px;
-    border-top: 1px solid #2a2f36;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;

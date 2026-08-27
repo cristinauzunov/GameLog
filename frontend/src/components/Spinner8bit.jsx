@@ -2,9 +2,13 @@ import "../spinner.css";
 
 function Spinner8bit() {
     return (
-        <div className="loader">
-            <span className="loader-text">loading</span>
-            <span className="load"></span>
+        <div className="wrapper">
+            <div className="circle"></div>
+            <div className="circle"></div>
+            <div className="circle"></div>
+            <div className="shadow"></div>
+            <div className="shadow"></div>
+            <div className="shadow"></div>
         </div>
     );
 }

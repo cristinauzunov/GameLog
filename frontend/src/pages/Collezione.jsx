@@ -141,6 +141,31 @@ function Collezione() {
     }
   }
 
+  function esportaCSV() {
+    let contenuto = "Titolo,Stato,Voto,Ore giocate,Note\n";
+
+    for (let i = 0; i < voci.length; i++) {
+      const v = voci[i];
+      const titolo = '"' + v.gioco.titolo.replace(/"/g, '""') + '"';
+      const stato = v.stato;
+      const voto = v.voto !== null ? v.voto : "";
+      const ore = v.oreGiocate !== null ? v.oreGiocate : "";
+      const note =
+        v.note !== null ? '"' + v.note.replace(/"/g, '""') + '"' : "";
+
+      contenuto +=
+        titolo + "," + stato + "," + voto + "," + ore + "," + note + "\n";
+    }
+
+    const blob = new Blob([contenuto], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "la-mia-collezione.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   if (caricamento) {
     return (
       <Container className="mt-5 text-center">
@@ -228,7 +253,7 @@ function Collezione() {
             />
 
             <Form.Select
-              style={{ maxWidth: "200px", marginLeft: "auto" }}
+              style={{ maxWidth: "180px", marginLeft: "auto" }}
               value={ordinamento}
               onChange={(e) => setOrdinamento(e.target.value)}
             >
@@ -236,6 +261,10 @@ function Collezione() {
               <option value="voto">Ordina per voto</option>
               <option value="ore">Ordina per ore giocate</option>
             </Form.Select>
+
+            <button type="button" className="btn-gamelog" onClick={esportaCSV}>
+              Esporta CSV
+            </button>
           </div>
 
           {vociOrdinate.length === 0 ? (

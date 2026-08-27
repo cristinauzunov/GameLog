@@ -1,15 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Row, Col, Card, Spinner, Badge } from "react-bootstrap";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import { Container, Row, Col, Card, Badge } from "react-bootstrap";
 import api from "../api";
+import Spinner8bit from "../components/Spinner8bit";
 
 function Statistiche() {
   const [stat, setStat] = useState(null);
@@ -40,7 +33,7 @@ function Statistiche() {
   if (caricamento) {
     return (
       <Container className="mt-5 text-center">
-        <Spinner animation="border" />
+        <Spinner8bit />
       </Container>
     );
   }
@@ -53,38 +46,20 @@ function Statistiche() {
     );
   }
 
-  const datiGrafico = [
-    {
-      nome: "Da giocare",
-      codice: "DA_GIOCARE",
-      valore: stat.daGiocare,
-      colore: "#6b7280",
-    },
-    {
-      nome: "In corso",
-      codice: "IN_CORSO",
-      valore: stat.inCorso,
-      colore: "#7c3aed",
-    },
-    {
-      nome: "Finito",
-      codice: "FINITO",
-      valore: stat.finito,
-      colore: "#4f46e5",
-    },
-    {
-      nome: "Abbandonato",
-      codice: "ABBANDONATO",
-      valore: stat.abbandonato,
-      colore: "#ec4899",
-    },
+  const dati = [
+    { nome: "Da giocare", codice: "DA_GIOCARE", valore: stat.daGiocare },
+    { nome: "In corso", codice: "IN_CORSO", valore: stat.inCorso },
+    { nome: "Finito", codice: "FINITO", valore: stat.finito },
+    { nome: "Abbandonato", codice: "ABBANDONATO", valore: stat.abbandonato },
   ];
 
-  const datiFiltrati = [];
-  for (let i = 0; i < datiGrafico.length; i++) {
-    if (datiGrafico[i].valore > 0) {
-      datiFiltrati.push(datiGrafico[i]);
+  const totale = stat.totaleGiochi;
+
+  function percentuale(valore) {
+    if (totale === 0) {
+      return 0;
     }
+    return Math.round((valore / totale) * 100);
   }
 
   const giochiFiltrati = [];
@@ -95,9 +70,9 @@ function Statistiche() {
   }
 
   let nomeStatoScelto = "";
-  for (let i = 0; i < datiGrafico.length; i++) {
-    if (datiGrafico[i].codice === statoScelto) {
-      nomeStatoScelto = datiGrafico[i].nome;
+  for (let i = 0; i < dati.length; i++) {
+    if (dati[i].codice === statoScelto) {
+      nomeStatoScelto = dati[i].nome;
     }
   }
 
@@ -141,41 +116,33 @@ function Statistiche() {
       <Card className="mt-2">
         <Card.Body>
           <h4 className="mb-4">Giochi per stato</h4>
-          <p className="text-muted">
-            Clicca una fetta per vedere i giochi di quello stato.
-          </p>
+          <p className="text-muted">Clicca uno stato per vedere i giochi.</p>
 
-          {datiFiltrati.length === 0 ? (
+          {totale === 0 ? (
             <p className="text-muted">
-              Aggiungi qualche gioco per vedere il grafico.
+              Aggiungi qualche gioco per vedere le statistiche.
             </p>
           ) : (
-            <ResponsiveContainer width="100%" height={350}>
-              <PieChart>
-                <Pie
-                  data={datiFiltrati}
-                  dataKey="valore"
-                  nameKey="nome"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={80}
-                  outerRadius={130}
-                  paddingAngle={3}
-                  label={(voce) => voce.nome + ": " + voce.valore}
-                  onClick={(voce) => setStatoScelto(voce.codice)}
+            <div>
+              {dati.map((d) => (
+                <div
+                  key={d.codice}
+                  className="stat-barra-riga"
+                  onClick={() => setStatoScelto(d.codice)}
                 >
-                  {datiFiltrati.map((voce, indice) => (
-                    <Cell
-                      key={indice}
-                      fill={voce.colore}
-                      style={{ cursor: "pointer" }}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+                  <div className="stat-barra-testo">
+                    <span>{d.nome}</span>
+                    <span>{d.valore}</span>
+                  </div>
+                  <div className="stat-barra-sfondo">
+                    <div
+                      className="stat-barra-riempimento"
+                      style={{ width: percentuale(d.valore) + "%" }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </Card.Body>
       </Card>

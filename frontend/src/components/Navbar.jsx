@@ -91,7 +91,7 @@ function Navbar() {
       <div className={"sidebar" + (aperta ? " aperta" : "")}>
         <div className="sidebar-logo">
           <Controller />
-          GameLog
+          <span className="sidebar-testo">GameLog</span>
         </div>
 
         <NavLink
@@ -102,7 +102,7 @@ function Navbar() {
             "sidebar-link" + (isActive ? " attivo" : "")
           }
         >
-          <House /> Home
+          <House /> <span className="sidebar-testo">Home</span>
         </NavLink>
 
         <NavLink
@@ -112,7 +112,7 @@ function Navbar() {
             "sidebar-link" + (isActive ? " attivo" : "")
           }
         >
-          <Search /> Cerca giochi
+          <Search /> <span className="sidebar-testo">Cerca giochi</span>
         </NavLink>
 
         <NavLink
@@ -122,9 +122,10 @@ function Navbar() {
             "sidebar-link" + (isActive ? " attivo" : "")
           }
         >
-          <Controller /> La mia collezione
+          <Controller />{" "}
+          <span className="sidebar-testo">La mia collezione</span>
           {numeroGiochi > 0 && (
-            <span className="sidebar-badge">{numeroGiochi}</span>
+            <span className="sidebar-badge sidebar-testo">{numeroGiochi}</span>
           )}
         </NavLink>
 
@@ -135,17 +136,8 @@ function Navbar() {
             "sidebar-link" + (isActive ? " attivo" : "")
           }
         >
-          <BarChart /> Statistiche
+          <BarChart /> <span className="sidebar-testo">Statistiche</span>
         </NavLink>
-
-        <div className="sidebar-sezione">Altro</div>
-
-        <button
-          className="sidebar-link logout"
-          onClick={() => setMostraLogout(true)}
-        >
-          <BoxArrowRight /> Logout
-        </button>
 
         <div className="sidebar-spazio"></div>
 
@@ -178,7 +170,7 @@ function Navbar() {
                   : "?"}
             </div>
           )}
-          <div className="sidebar-utente-info">
+          <div className="sidebar-utente-info sidebar-testo">
             <div className="sidebar-utente-nome">
               {utente ? utente.nome || utente.username : "Il mio profilo"}
             </div>
@@ -187,6 +179,13 @@ function Navbar() {
             </div>
           </div>
         </div>
+
+        <button
+          className="sidebar-link logout mt-2"
+          onClick={() => setMostraLogout(true)}
+        >
+          <BoxArrowRight /> <span className="sidebar-testo">Logout</span>
+        </button>
       </div>
 
       <Modal show={mostraLogout} onHide={() => setMostraLogout(false)} centered>
