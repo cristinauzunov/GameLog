@@ -8,6 +8,7 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [utente, setUtente] = useState(null);
   const [numeroGiochi, setNumeroGiochi] = useState(0);
+  const [nonLette, setNonLette] = useState(0);
 
   useEffect(() => {
     async function caricaUtente() {
@@ -28,6 +29,7 @@ export function AuthProvider({ children }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     caricaNumeroGiochi();
+    caricaNonLette();
   }, [token]);
 
   async function caricaNumeroGiochi() {
@@ -43,6 +45,25 @@ export function AuthProvider({ children }) {
     }
   }
 
+  async function caricaNonLette() {
+    if (token) {
+      try {
+        const risposta = await api.get("/notifiche/mie");
+        let conta = 0;
+        for (let i = 0; i < risposta.data.length; i++) {
+          if (!risposta.data[i].letta) {
+            conta++;
+          }
+        }
+        setNonLette(conta);
+      } catch {
+        setNonLette(0);
+      }
+    } else {
+      setNonLette(0);
+    }
+  }
+
   function login(nuovoToken) {
     localStorage.setItem("token", nuovoToken);
     setToken(nuovoToken);
@@ -53,6 +74,7 @@ export function AuthProvider({ children }) {
     setToken(null);
     setUtente(null);
     setNumeroGiochi(0);
+    setNonLette(0);
   }
 
   function aggiornaUtente(datiUtente) {
@@ -65,10 +87,12 @@ export function AuthProvider({ children }) {
         token,
         utente,
         numeroGiochi,
+        nonLette,
         login,
         logout,
         aggiornaUtente,
         caricaNumeroGiochi,
+        caricaNonLette,
       }}
     >
       {children}

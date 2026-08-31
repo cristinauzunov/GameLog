@@ -8,13 +8,17 @@ import {
   BoxArrowRight,
   List,
   ArrowLeft,
+  People,
+  Rss,
+  Bell,
 } from "react-bootstrap-icons";
 import { Modal, Button } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
 import "../layout.css";
 
 function Navbar() {
-  const { token, utente, numeroGiochi, logout } = useContext(AuthContext);
+  const { token, utente, numeroGiochi, nonLette, logout } =
+    useContext(AuthContext);
   const navigate = useNavigate();
   const [aperta, setAperta] = useState(false);
   const [barreVisibili, setBarreVisibili] = useState(true);
@@ -137,6 +141,39 @@ function Navbar() {
           }
         >
           <BarChart /> <span className="sidebar-testo">Statistiche</span>
+        </NavLink>
+
+        <NavLink
+          to="/feed"
+          onClick={chiudi}
+          className={({ isActive }) =>
+            "sidebar-link" + (isActive ? " attivo" : "")
+          }
+        >
+          <Rss /> <span className="sidebar-testo">Feed</span>
+        </NavLink>
+
+        <NavLink
+          to="/amici"
+          onClick={chiudi}
+          className={({ isActive }) =>
+            "sidebar-link" + (isActive ? " attivo" : "")
+          }
+        >
+          <People /> <span className="sidebar-testo">Amici</span>
+        </NavLink>
+
+        <NavLink
+          to="/notifiche"
+          onClick={chiudi}
+          className={({ isActive }) =>
+            "sidebar-link" + (isActive ? " attivo" : "")
+          }
+        >
+          <Bell /> <span className="sidebar-testo">Notifiche</span>
+          {nonLette > 0 && (
+            <span className="sidebar-badge sidebar-testo">{nonLette}</span>
+          )}
         </NavLink>
 
         <div className="sidebar-spazio"></div>

@@ -12,6 +12,9 @@ import RottaProtetta from "./components/RottaProtetta";
 import Categoria from "./pages/Categoria";
 import Profilo from "./pages/Profilo";
 import Footer from "./components/Footer";
+import Amici from "./pages/Amici";
+import Feed from "./pages/Feed";
+import Notifiche from "./pages/Notifiche";
 
 function App() {
   return (
@@ -102,6 +105,36 @@ function App() {
             <RottaProtetta>
               <div className="contenuto">
                 <Profilo />
+              </div>
+            </RottaProtetta>
+          }
+        />
+        <Route
+          path="/amici"
+          element={
+            <RottaProtetta>
+              <div className="contenuto">
+                <Amici />
+              </div>
+            </RottaProtetta>
+          }
+        />
+        <Route
+          path="/feed"
+          element={
+            <RottaProtetta>
+              <div className="contenuto">
+                <Feed />
+              </div>
+            </RottaProtetta>
+          }
+        />
+        <Route
+          path="/notifiche"
+          element={
+            <RottaProtetta>
+              <div className="contenuto">
+                <Notifiche />
               </div>
             </RottaProtetta>
           }

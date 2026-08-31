@@ -6,6 +6,8 @@ import {
   PlayFill,
   CheckCircleFill,
   XCircleFill,
+  Trash,
+  Pencil,
 } from "react-bootstrap-icons";
 import api from "../api";
 import Spinner8bit from "../components/Spinner8bit";
@@ -14,7 +16,7 @@ import { AuthContext } from "../context/AuthContext";
 function DettaglioGioco() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { caricaNumeroGiochi } = useContext(AuthContext);
+  const { utente, caricaNumeroGiochi } = useContext(AuthContext);
 
   const [gioco, setGioco] = useState(null);
   const [caricamento, setCaricamento] = useState(true);
@@ -24,6 +26,14 @@ function DettaglioGioco() {
   const [oreGiocate, setOreGiocate] = useState("");
   const [note, setNote] = useState("");
   const [errore, setErrore] = useState("");
+
+  const [recensioni, setRecensioni] = useState([]);
+  const [testoRec, setTestoRec] = useState("");
+  const [votoRec, setVotoRec] = useState(0);
+
+  const [recInModifica, setRecInModifica] = useState(null);
+  const [testoModifica, setTestoModifica] = useState("");
+  const [votoModifica, setVotoModifica] = useState(0);
 
   const stati = [
     { codice: "DA_GIOCARE", etichetta: "Da giocare", icona: <Bookmark /> },
@@ -46,6 +56,20 @@ function DettaglioGioco() {
     caricaGioco();
   }, [id]);
 
+  useEffect(() => {
+    caricaRecensioni();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  async function caricaRecensioni() {
+    try {
+      const risposta = await api.get("/recensioni/gioco/" + id);
+      setRecensioni(risposta.data);
+    } catch {
+      setRecensioni([]);
+    }
+  }
+
   async function aggiungi() {
     setErrore("");
     try {
@@ -65,6 +89,53 @@ function DettaglioGioco() {
       navigate("/");
     } catch {
       setErrore("Errore durante l'aggiunta alla collezione");
+    }
+  }
+
+  async function inviaRecensione() {
+    if (testoRec.trim() === "") {
+      return;
+    }
+    try {
+      await api.post("/recensioni", {
+        idRawg: parseInt(id),
+        titoloGioco: gioco.name,
+        testo: testoRec,
+        voto: votoRec > 0 ? votoRec : null,
+      });
+      setTestoRec("");
+      setVotoRec(0);
+      caricaRecensioni();
+    } catch {
+      setErrore("Errore durante la pubblicazione della recensione");
+    }
+  }
+
+  async function eliminaRecensione(idRec) {
+    try {
+      await api.delete("/recensioni/" + idRec);
+      caricaRecensioni();
+    } catch {
+      setErrore("Errore durante l'eliminazione della recensione");
+    }
+  }
+
+  function iniziaModifica(rec) {
+    setRecInModifica(rec.id);
+    setTestoModifica(rec.testo);
+    setVotoModifica(rec.voto !== null ? rec.voto : 0);
+  }
+
+  async function salvaModificaRec(idRec) {
+    try {
+      await api.put("/recensioni/" + idRec, {
+        testo: testoModifica,
+        voto: votoModifica > 0 ? votoModifica : null,
+      });
+      setRecInModifica(null);
+      caricaRecensioni();
+    } catch {
+      setErrore("Errore durante la modifica della recensione");
     }
   }
 
@@ -188,6 +259,169 @@ function DettaglioGioco() {
             <p style={{ whiteSpace: "pre-line", lineHeight: "1.7" }}>
               {gioco.description_raw}
             </p>
+          )}
+
+          <hr className="my-4" />
+          <h4 className="mb-3">Recensioni</h4>
+
+          <div className="mb-4">
+            <p className="mb-1">Il tuo voto</p>
+            <div className="mb-2">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+                <span
+                  key={n}
+                  onClick={() => setVotoRec(n)}
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "1.4rem",
+                    color: n <= votoRec ? "#ffc107" : "#555",
+                  }}
+                >
+                  ★
+                </span>
+              ))}
+              {votoRec > 0 && <span className="ms-2">{votoRec}/10</span>}
+            </div>
+
+            <Form.Control
+              as="textarea"
+              rows={3}
+              className="mb-2"
+              placeholder="Scrivi una recensione..."
+              value={testoRec}
+              onChange={(e) => setTestoRec(e.target.value)}
+            />
+            <button
+              type="button"
+              className="btn-gamelog"
+              onClick={inviaRecensione}
+            >
+              Pubblica recensione
+            </button>
+          </div>
+
+          {recensioni.length === 0 ? (
+            <p className="text-muted">
+              Nessuna recensione ancora. Scrivi la prima!
+            </p>
+          ) : (
+            recensioni.map((rec) => (
+              <Card key={rec.id} className="mb-3">
+                <Card.Body>
+                  <div className="d-flex justify-content-between align-items-start">
+                    <div className="d-flex align-items-center gap-2">
+                      {rec.utente.avatar ? (
+                        <img
+                          src={rec.utente.avatar}
+                          alt="avatar"
+                          style={{
+                            width: "36px",
+                            height: "36px",
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                            flexShrink: 0,
+                          }}
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            width: "36px",
+                            height: "36px",
+                            borderRadius: "50%",
+                            background:
+                              "linear-gradient(135deg, #4f46e5, #7c3aed)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#fff",
+                            fontWeight: "bold",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {(rec.utente.nome || rec.utente.username || "?")
+                            .charAt(0)
+                            .toUpperCase()}
+                        </div>
+                      )}
+                      <div>
+                        <strong>
+                          {rec.utente.nome || rec.utente.username}
+                        </strong>
+                        {rec.voto && (
+                          <span className="ms-2" style={{ color: "#ffc107" }}>
+                            {rec.voto}/10
+                          </span>
+                        )}
+                        <span
+                          className="text-muted ms-2"
+                          style={{ fontSize: "0.8rem" }}
+                        >
+                          {rec.dataCreazione}
+                        </span>
+                      </div>
+                    </div>
+
+                    {utente &&
+                      rec.utente.id === utente.id &&
+                      recInModifica !== rec.id && (
+                        <div className="d-flex gap-3">
+                          <Pencil
+                            style={{ cursor: "pointer", color: "#9ca3af" }}
+                            onClick={() => iniziaModifica(rec)}
+                          />
+                          <Trash
+                            style={{ cursor: "pointer", color: "#dc3545" }}
+                            onClick={() => eliminaRecensione(rec.id)}
+                          />
+                        </div>
+                      )}
+                  </div>
+
+                  {recInModifica === rec.id ? (
+                    <div className="mt-2">
+                      <div className="mb-2">
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+                          <span
+                            key={n}
+                            onClick={() => setVotoModifica(n)}
+                            style={{
+                              cursor: "pointer",
+                              fontSize: "1.3rem",
+                              color: n <= votoModifica ? "#ffc107" : "#555",
+                            }}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        className="mb-2"
+                        value={testoModifica}
+                        onChange={(e) => setTestoModifica(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="btn-gamelog-sm me-2"
+                        onClick={() => salvaModificaRec(rec.id)}
+                      >
+                        Salva
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-gamelog-danger-sm"
+                        onClick={() => setRecInModifica(null)}
+                      >
+                        Annulla
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="mt-2 mb-0">{rec.testo}</p>
+                  )}
+                </Card.Body>
+              </Card>
+            ))
           )}
         </Col>
       </Row>

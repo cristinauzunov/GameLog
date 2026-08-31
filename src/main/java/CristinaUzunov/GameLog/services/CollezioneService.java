@@ -18,19 +18,18 @@ public class CollezioneService {
 
     private final VoceCollezioneRepository voceCollezioneRepository;
     private final GiocoRepository giocoRepository;
+    private final AttivitaService attivitaService;
 
-    public CollezioneService(VoceCollezioneRepository voceCollezioneRepository, GiocoRepository giocoRepository) {
+    public CollezioneService(VoceCollezioneRepository voceCollezioneRepository, GiocoRepository giocoRepository, AttivitaService attivitaService) {
         this.voceCollezioneRepository = voceCollezioneRepository;
         this.giocoRepository = giocoRepository;
+        this.attivitaService = attivitaService;
     }
 
-    // aggiunge un gioco alla collezione dell'utente
     public VoceCollezione aggiungi(Utente utente, VoceCollezioneDTO dto) {
 
-        // cerco se il gioco esiste gia nel database (per idRawg)
         Gioco gioco = giocoRepository.findByIdRawg(dto.getIdRawg()).orElse(null);
 
-        // se non c'e, lo creo e lo salvo
         if (gioco == null) {
             gioco = new Gioco();
             gioco.setIdRawg(dto.getIdRawg());
@@ -42,7 +41,6 @@ public class CollezioneService {
             gioco = giocoRepository.save(gioco);
         }
 
-        // creo la voce di collezione collegata all'utente e al gioco
         VoceCollezione voce = new VoceCollezione();
         voce.setUtente(utente);
         voce.setGioco(gioco);
@@ -51,33 +49,43 @@ public class CollezioneService {
         voce.setOreGiocate(dto.getOreGiocate());
         voce.setNote(dto.getNote());
 
-        return voceCollezioneRepository.save(voce);
+        VoceCollezione salvata = voceCollezioneRepository.save(voce);
+
+        attivitaService.registra(utente, gioco.getIdRawg(), gioco.getTitolo(), gioco.getCopertina(), "AGGIUNTO");
+
+        return salvata;
     }
 
-    // restituisce tutta la collezione dell'utente
     public List<VoceCollezione> getMiaCollezione(Utente utente) {
         return voceCollezioneRepository.findByUtenteId(utente.getId());
     }
 
-    // modifica una voce della collezione (solo se e dell'utente)
     public VoceCollezione aggiorna(Long id, Utente utente, AggiornaVoceDTO dto) {
         VoceCollezione voce = voceCollezioneRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Voce non trovata con id: " + id));
 
-        // controllo che la voce appartenga all'utente loggato
         if (!voce.getUtente().getId().equals(utente.getId())) {
             throw new RuntimeException("Non puoi modificare questa voce");
         }
 
-        voce.setStato(StatoGioco.valueOf(dto.getStato()));
+        StatoGioco statoVecchio = voce.getStato();
+        StatoGioco statoNuovo = StatoGioco.valueOf(dto.getStato());
+
+        voce.setStato(statoNuovo);
         voce.setVoto(dto.getVoto());
         voce.setOreGiocate(dto.getOreGiocate());
         voce.setNote(dto.getNote());
 
-        return voceCollezioneRepository.save(voce);
+        VoceCollezione salvata = voceCollezioneRepository.save(voce);
+
+        // registro l'attivita solo se lo stato e cambiato davvero
+        if (statoVecchio != statoNuovo) {
+            attivitaService.registra(utente, voce.getGioco().getIdRawg(), voce.getGioco().getTitolo(), voce.getGioco().getCopertina(), statoNuovo.toString());
+        }
+
+        return salvata;
     }
 
-    // elimina una voce della collezione (solo se e dell'utente)
     public void elimina(Long id, Utente utente) {
         VoceCollezione voce = voceCollezioneRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Voce non trovata con id: " + id));
@@ -89,7 +97,6 @@ public class CollezioneService {
         voceCollezioneRepository.delete(voce);
     }
 
-    // calcola le statistiche della collezione dell'utente
     public StatisticheDTO getStatistiche(Utente utente) {
         List<VoceCollezione> voci = voceCollezioneRepository.findByUtenteId(utente.getId());
 
@@ -104,7 +111,6 @@ public class CollezioneService {
         for (int i = 0; i < voci.size(); i++) {
             VoceCollezione voce = voci.get(i);
 
-            // conto i giochi in base allo stato
             if (voce.getStato() == StatoGioco.DA_GIOCARE) {
                 daGiocare++;
             } else if (voce.getStato() == StatoGioco.IN_CORSO) {
@@ -115,19 +121,16 @@ public class CollezioneService {
                 abbandonato++;
             }
 
-            // sommo le ore (se presenti)
             if (voce.getOreGiocate() != null) {
                 oreTotali = oreTotali + voce.getOreGiocate();
             }
 
-            // sommo i voti (se presenti) per calcolare la media
             if (voce.getVoto() != null) {
                 sommaVoti = sommaVoti + voce.getVoto();
                 quantiVoti++;
             }
         }
 
-        // calcolo il voto medio, evitando la divisione per zero
         double votoMedio = 0;
         if (quantiVoti > 0) {
             votoMedio = (double) sommaVoti / quantiVoti;
