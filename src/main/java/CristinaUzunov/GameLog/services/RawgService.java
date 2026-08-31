@@ -2,6 +2,7 @@ package CristinaUzunov.GameLog.services;
 
 import CristinaUzunov.GameLog.dto.RawgGiocoDTO;
 import CristinaUzunov.GameLog.dto.RawgRispostaDTO;
+import CristinaUzunov.GameLog.dto.RawgScreenshotDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -95,6 +96,25 @@ public class RawgService {
 
         } catch (Exception e) {
             System.out.println("Errore RAWG genere: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    public List<String> getScreenshot(Long idRawg) {
+        try {
+            String url = "https://api.rawg.io/api/games/" + idRawg + "/screenshots?key=" + apiKey;
+            RawgScreenshotDTO risposta = restTemplate.getForObject(url, RawgScreenshotDTO.class);
+
+            List<String> immagini = new ArrayList<>();
+            if (risposta != null && risposta.getResults() != null) {
+                for (int i = 0; i < risposta.getResults().size(); i++) {
+                    immagini.add(risposta.getResults().get(i).getImage());
+                }
+            }
+            return immagini;
+
+        } catch (Exception e) {
+            System.out.println("Errore RAWG screenshot: " + e.getMessage());
             return new ArrayList<>();
         }
     }

@@ -19,6 +19,7 @@ function DettaglioGioco() {
   const { utente, caricaNumeroGiochi } = useContext(AuthContext);
 
   const [gioco, setGioco] = useState(null);
+  const [screenshot, setScreenshot] = useState([]);
   const [caricamento, setCaricamento] = useState(true);
 
   const [stato, setStato] = useState("DA_GIOCARE");
@@ -54,6 +55,18 @@ function DettaglioGioco() {
       }
     }
     caricaGioco();
+  }, [id]);
+
+  useEffect(() => {
+    async function caricaScreenshot() {
+      try {
+        const risposta = await api.get("/giochi/" + id + "/screenshot");
+        setScreenshot(risposta.data);
+      } catch {
+        setScreenshot([]);
+      }
+    }
+    caricaScreenshot();
   }, [id]);
 
   useEffect(() => {
@@ -251,14 +264,93 @@ function DettaglioGioco() {
         </Col>
 
         <Col md={8} className="mt-4 mt-md-0">
-          <h2>{gioco.name}</h2>
-          <p className="text-muted">
-            Uscita: {gioco.released ? gioco.released : "-"}
-          </p>
+          <h2 className="mb-2">{gioco.name}</h2>
+
+          <div className="d-flex align-items-center gap-3 mb-3 flex-wrap">
+            {gioco.metacritic && (
+              <span
+                style={{
+                  backgroundColor:
+                    gioco.metacritic >= 75
+                      ? "#198754"
+                      : gioco.metacritic >= 50
+                        ? "#c9a227"
+                        : "#dc3545",
+                  color: "#fff",
+                  padding: "2px 10px",
+                  borderRadius: "6px",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                }}
+              >
+                Metacritic {gioco.metacritic}
+              </span>
+            )}
+            {gioco.rating > 0 && (
+              <span style={{ color: "#ffc107" }}>
+                ★ {gioco.rating.toFixed(1)}/5
+              </span>
+            )}
+            <span className="text-muted">
+              Uscita: {gioco.released ? gioco.released : "-"}
+            </span>
+          </div>
+
+          <div
+            style={{
+              backgroundColor: "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: "12px",
+              padding: "16px",
+              marginBottom: "24px",
+            }}
+          >
+            {gioco.genres && gioco.genres.length > 0 && (
+              <p className="mb-2">
+                <span className="text-muted">Generi</span>
+                <br />
+                {gioco.genres.map((g) => g.name).join(", ")}
+              </p>
+            )}
+            {gioco.platforms && gioco.platforms.length > 0 && (
+              <p className="mb-2">
+                <span className="text-muted">Piattaforme</span>
+                <br />
+                {gioco.platforms.map((p) => p.platform.name).join(", ")}
+              </p>
+            )}
+            {gioco.developers && gioco.developers.length > 0 && (
+              <p className="mb-0">
+                <span className="text-muted">Sviluppatore</span>
+                <br />
+                {gioco.developers.map((d) => d.name).join(", ")}
+              </p>
+            )}
+          </div>
+
           {gioco.description_raw && (
-            <p style={{ whiteSpace: "pre-line", lineHeight: "1.7" }}>
-              {gioco.description_raw}
-            </p>
+            <>
+              <h5 className="mb-2">Descrizione</h5>
+              <p style={{ whiteSpace: "pre-line", lineHeight: "1.7" }}>
+                {gioco.description_raw}
+              </p>
+            </>
+          )}
+
+          {screenshot.length > 0 && (
+            <>
+              <h5 className="mb-2 mt-4">Immagini</h5>
+              <div className="screenshot-galleria">
+                {screenshot.map((img, indice) => (
+                  <img
+                    key={indice}
+                    src={img}
+                    alt={"screenshot " + (indice + 1)}
+                    className="screenshot-img"
+                  />
+                ))}
+              </div>
+            </>
           )}
 
           <hr className="my-4" />

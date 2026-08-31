@@ -46,4 +46,9 @@ public class GiocoController {
     public List<RawgGiocoDTO> perGenere(@PathVariable String genere) {
         return rawgService.getPerGenere(genere);
     }
+    //screenshot
+    @GetMapping("/{id}/screenshot")
+    public List<String> getScreenshot(@PathVariable Long id) {
+        return rawgService.getScreenshot(id);
+    }
 }

@@ -143,3 +143,22 @@ h1, h2, h3, h4, h5, h6,
 .stat-barra-riga:hover .stat-barra-riempimento {
     background: linear-gradient(90deg, #7c3aed 0%, #a855f7 100%);
 }
+
+.screenshot-galleria {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.screenshot-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.2s;
+}
+
+.screenshot-img:hover {
+    transform: scale(1.03);
+}

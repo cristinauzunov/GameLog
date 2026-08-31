@@ -14,6 +14,7 @@
   object-fit: cover;
   object-position: center 30%;
 }
+
 .home-banner-overlay {
   position: absolute;
   bottom: 0;
@@ -33,32 +34,36 @@
   display: flex;
   gap: 14px;
   overflow-x: auto;
-  padding-bottom: 10px;
+  overflow-y: visible;
+  padding: 20px 0 20px;
 }
 
 .fila-card {
   flex: 0 0 auto;
   width: 220px;
   cursor: pointer;
-  transition: transform 0.25s;
+  transition: transform 0.25s, box-shadow 0.25s;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #1a1f24;
 }
 
 .fila-card:hover {
-  transform: scale(1.12);
-  z-index: 3;
-  position: relative;
+  transform: scale(1.08);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  z-index: 5;
 }
 
 .fila-cover {
-  width: 220px;
+  width: 100%;
   height: 130px;
   object-fit: cover;
-  border-radius: 10px;
   display: block;
 }
 
 .fila-cover-vuota {
-  width: 220px;
+  width: 100%;
   height: 130px;
   display: flex;
   align-items: center;
@@ -71,7 +76,7 @@
 }
 
 .fila-titolo {
-  margin-top: 6px;
+  padding: 8px 12px 0;
   font-size: 0.85rem;
   color: #ddd;
   line-height: 1.2;
@@ -81,6 +86,25 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* pannello info che appare all'hover */
+.fila-info {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+
+.fila-card:hover .fila-info {
+  max-height: 100px;
+}
+
+.fila-info-contenuto {
+  padding: 6px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 /* pulsanti categorie */
 .categorie-bottoni {
   display: flex;
@@ -99,9 +123,9 @@
   display: flex;
   gap: 14px;
   width: max-content;
+  padding: 20px 0;
   animation: scorriOrizzontale 120s linear infinite;
 }
-
 /* in pausa quando ci passi sopra col mouse */
 .fila-auto:hover .fila-auto-scorri {
   animation-play-state: paused;
