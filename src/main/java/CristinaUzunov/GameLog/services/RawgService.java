@@ -150,4 +150,30 @@ public class RawgService {
             return new ArrayList<>();
         }
     }
+    public List<RawgGiocoDTO> cercaGiochi(String titolo, String ordina, String anno) {
+        try {
+            String url = "https://api.rawg.io/api/games?key=" + apiKey
+                    + "&search=" + URLEncoder.encode(titolo, "UTF-8")
+                    + "&page_size=20";
+
+            if (ordina != null && !ordina.isEmpty()) {
+                url = url + "&ordering=" + ordina;
+            }
+
+            if (anno != null && !anno.isEmpty()) {
+                url = url + "&dates=" + anno + "-01-01," + anno + "-12-31";
+            }
+
+            RawgRispostaDTO risposta = restTemplate.getForObject(url, RawgRispostaDTO.class);
+
+            if (risposta == null || risposta.getResults() == null) {
+                return new ArrayList<>();
+            }
+            return risposta.getResults();
+
+        } catch (Exception e) {
+            System.out.println("Errore RAWG ricerca: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
 }

@@ -39,6 +39,9 @@ function DettaglioGioco() {
   const [testoModifica, setTestoModifica] = useState("");
   const [votoModifica, setVotoModifica] = useState(0);
 
+  const [risposte, setRisposte] = useState({});
+  const [testoRisposta, setTestoRisposta] = useState({});
+
   const stati = [
     { codice: "DA_GIOCARE", etichetta: "Da giocare", icona: <Bookmark /> },
     { codice: "IN_CORSO", etichetta: "In corso", icona: <PlayFill /> },
@@ -97,7 +100,18 @@ function DettaglioGioco() {
   }, [id]);
 
   useEffect(() => {
-    caricaRecensioni();
+    async function caricaRecensioniIniziali() {
+      try {
+        const risposta = await api.get("/recensioni/gioco/" + id);
+        setRecensioni(risposta.data);
+        for (let i = 0; i < risposta.data.length; i++) {
+          caricaRisposte(risposta.data[i].id);
+        }
+      } catch {
+        setRecensioni([]);
+      }
+    }
+    caricaRecensioniIniziali();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -105,8 +119,58 @@ function DettaglioGioco() {
     try {
       const risposta = await api.get("/recensioni/gioco/" + id);
       setRecensioni(risposta.data);
+      for (let i = 0; i < risposta.data.length; i++) {
+        caricaRisposte(risposta.data[i].id);
+      }
     } catch {
       setRecensioni([]);
+    }
+  }
+
+  async function caricaRisposte(recensioneId) {
+    try {
+      const risposta = await api.get("/risposte/recensione/" + recensioneId);
+      setRisposte((precedenti) => {
+        const nuovo = { ...precedenti };
+        nuovo[recensioneId] = risposta.data;
+        return nuovo;
+      });
+    } catch {
+      setRisposte((precedenti) => {
+        const nuovo = { ...precedenti };
+        nuovo[recensioneId] = [];
+        return nuovo;
+      });
+    }
+  }
+
+  async function inviaRisposta(recensioneId) {
+    const testo = testoRisposta[recensioneId];
+    if (!testo || testo.trim() === "") {
+      return;
+    }
+    try {
+      await api.post("/risposte", {
+        recensioneId: recensioneId,
+        testo: testo,
+      });
+      setTestoRisposta((precedenti) => {
+        const nuovo = { ...precedenti };
+        nuovo[recensioneId] = "";
+        return nuovo;
+      });
+      caricaRisposte(recensioneId);
+    } catch {
+      setErrore("Errore durante l'invio della risposta");
+    }
+  }
+
+  async function eliminaRisposta(idRisposta, recensioneId) {
+    try {
+      await api.delete("/risposte/" + idRisposta);
+      caricaRisposte(recensioneId);
+    } catch {
+      setErrore("Errore durante l'eliminazione della risposta");
     }
   }
 
@@ -585,8 +649,124 @@ function DettaglioGioco() {
                       </button>
                     </div>
                   ) : (
-                    <p className="mt-2 mb-0">{rec.testo}</p>
+                    <p className="mt-2 mb-2">{rec.testo}</p>
                   )}
+
+                  <div
+                    style={{
+                      borderLeft: "2px solid rgba(255,255,255,0.1)",
+                      paddingLeft: "12px",
+                      marginTop: "10px",
+                    }}
+                  >
+                    {risposte[rec.id] &&
+                      risposte[rec.id].map((risp) => (
+                        <div
+                          key={risp.id}
+                          className="d-flex justify-content-between align-items-start mb-2"
+                        >
+                          <div className="d-flex align-items-start gap-2">
+                            {risp.utente.avatar ? (
+                              <img
+                                src={risp.utente.avatar}
+                                alt="avatar"
+                                style={{
+                                  width: "28px",
+                                  height: "28px",
+                                  borderRadius: "50%",
+                                  objectFit: "cover",
+                                  flexShrink: 0,
+                                  marginTop: "2px",
+                                }}
+                              />
+                            ) : (
+                              <div
+                                style={{
+                                  width: "28px",
+                                  height: "28px",
+                                  borderRadius: "50%",
+                                  background:
+                                    "linear-gradient(135deg, #4f46e5, #7c3aed)",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  color: "#fff",
+                                  fontWeight: "bold",
+                                  fontSize: "0.75rem",
+                                  flexShrink: 0,
+                                  marginTop: "2px",
+                                }}
+                              >
+                                {(
+                                  risp.utente.nome ||
+                                  risp.utente.username ||
+                                  "?"
+                                )
+                                  .charAt(0)
+                                  .toUpperCase()}
+                              </div>
+                            )}
+                            <div>
+                              <strong
+                                style={{
+                                  fontSize: "0.85rem",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() =>
+                                  navigate("/utente/" + risp.utente.id)
+                                }
+                              >
+                                {risp.utente.nome || risp.utente.username}
+                              </strong>
+                              <span
+                                className="text-muted ms-2"
+                                style={{ fontSize: "0.75rem" }}
+                              >
+                                {risp.dataCreazione}
+                              </span>
+                              <div style={{ fontSize: "0.9rem" }}>
+                                {risp.testo}
+                              </div>
+                            </div>
+                          </div>
+                          {utente && risp.utente.id === utente.id && (
+                            <Trash
+                              style={{
+                                cursor: "pointer",
+                                color: "#dc3545",
+                                fontSize: "0.85rem",
+                                flexShrink: 0,
+                              }}
+                              onClick={() => eliminaRisposta(risp.id, rec.id)}
+                            />
+                          )}
+                        </div>
+                      ))}
+
+                    <div className="d-flex gap-2 mt-2">
+                      <Form.Control
+                        type="text"
+                        placeholder="Rispondi..."
+                        style={{ fontSize: "0.9rem" }}
+                        value={testoRisposta[rec.id] || ""}
+                        onChange={(e) => {
+                          const valore = e.target.value;
+                          setTestoRisposta((precedenti) => {
+                            const nuovo = { ...precedenti };
+                            nuovo[rec.id] = valore;
+                            return nuovo;
+                          });
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="btn-gamelog-sm"
+                        onClick={() => inviaRisposta(rec.id)}
+                      >
+                        Invia
+                      </button>
+                    </div>
+                  </div>
                 </Card.Body>
               </Card>
             ))

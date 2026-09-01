@@ -17,11 +17,6 @@ public class GiocoController {
         this.rawgService = rawgService;
     }
 
-    // cerca giochi su RAWG per titolo
-    @GetMapping("/cerca")
-    public List<RawgGiocoDTO> cerca(@RequestParam String titolo) {
-        return rawgService.cercaGiochi(titolo);
-    }
 
     // dettagli di un singolo gioco
     @GetMapping("/{id}")
@@ -61,5 +56,13 @@ public class GiocoController {
     @GetMapping("/{id}/video")
     public List<String> getVideo(@PathVariable Long id) {
         return rawgService.getVideo(id);
+    }
+
+    @GetMapping("/cerca")
+    public List<RawgGiocoDTO> cerca(
+            @RequestParam String titolo,
+            @RequestParam(required = false) String ordina,
+            @RequestParam(required = false) String anno) {
+        return rawgService.cercaGiochi(titolo, ordina, anno);
     }
 }
