@@ -1,14 +1,15 @@
-import { Controller, Github } from "react-bootstrap-icons";
-import "../footer.css";
 import { useContext } from "react";
+import { Controller, Github } from "react-bootstrap-icons";
 import { AuthContext } from "../context/AuthContext";
+import "../footer.css";
 
 function Footer() {
-    const { token } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
 
-    if (!token) {
-        return null;
-    }
+  if (!token) {
+    return null;
+  }
+
   return (
     <footer className="footer">
       <div className="footer-contenuto">
@@ -28,6 +29,8 @@ function Footer() {
           <a href="/cerca">Cerca giochi</a>
           <a href="/collezione">La mia collezione</a>
           <a href="/statistiche">Statistiche</a>
+          <a href="/feed">Feed</a>
+          <a href="/amici">Amici</a>
         </div>
 
         <div className="footer-colonna">

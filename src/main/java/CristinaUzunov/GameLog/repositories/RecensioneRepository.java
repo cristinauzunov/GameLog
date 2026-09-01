@@ -10,4 +10,6 @@ public interface RecensioneRepository extends JpaRepository<Recensione, Long> {
     List<Recensione> findByIdRawg(Long idRawg);
 
     List<Recensione> findByUtenteIdInOrderByIdDesc(List<Long> idUtenti);
+
+    List<Recensione> findByUtenteId(Long utenteId);
 }

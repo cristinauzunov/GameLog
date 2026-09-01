@@ -28,17 +28,6 @@ function FilaGiochi({ titolo, giochi }) {
               <div className="fila-cover fila-cover-vuota">{gioco.name}</div>
             )}
             <div className="fila-titolo">{gioco.name}</div>
-
-            <div className="fila-info">
-              <div className="fila-info-contenuto">
-                <div className="text-muted" style={{ fontSize: "0.8rem" }}>
-                  {gioco.released ? gioco.released : "Data non disponibile"}
-                </div>
-                <span style={{ color: "#7c3aed", fontSize: "0.85rem" }}>
-                  Vedi dettagli ›
-                </span>
-              </div>
-            </div>
           </div>
         ))}
       </div>

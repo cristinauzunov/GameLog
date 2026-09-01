@@ -12,6 +12,7 @@ import {
 import api from "../api";
 import Spinner8bit from "../components/Spinner8bit";
 import { AuthContext } from "../context/AuthContext";
+import "../home.css";
 
 function DettaglioGioco() {
   const { id } = useParams();
@@ -20,6 +21,8 @@ function DettaglioGioco() {
 
   const [gioco, setGioco] = useState(null);
   const [screenshot, setScreenshot] = useState([]);
+  const [simili, setSimili] = useState([]);
+  const [video, setVideo] = useState([]);
   const [caricamento, setCaricamento] = useState(true);
 
   const [stato, setStato] = useState("DA_GIOCARE");
@@ -67,6 +70,30 @@ function DettaglioGioco() {
       }
     }
     caricaScreenshot();
+  }, [id]);
+
+  useEffect(() => {
+    async function caricaSimili() {
+      try {
+        const risposta = await api.get("/giochi/" + id + "/simili");
+        setSimili(risposta.data);
+      } catch {
+        setSimili([]);
+      }
+    }
+    caricaSimili();
+  }, [id]);
+
+  useEffect(() => {
+    async function caricaVideo() {
+      try {
+        const risposta = await api.get("/giochi/" + id + "/video");
+        setVideo(risposta.data);
+      } catch {
+        setVideo([]);
+      }
+    }
+    caricaVideo();
   }, [id]);
 
   useEffect(() => {
@@ -328,6 +355,23 @@ function DettaglioGioco() {
             )}
           </div>
 
+          {video.length > 0 && (
+            <>
+              <h5 className="mb-2">Trailer</h5>
+              <video
+                controls
+                style={{
+                  width: "100%",
+                  borderRadius: "12px",
+                  marginBottom: "24px",
+                }}
+                src={video[0]}
+              >
+                Il tuo browser non supporta il video.
+              </video>
+            </>
+          )}
+
           {gioco.description_raw && (
             <>
               <h5 className="mb-2">Descrizione</h5>
@@ -348,6 +392,34 @@ function DettaglioGioco() {
                     alt={"screenshot " + (indice + 1)}
                     className="screenshot-img"
                   />
+                ))}
+              </div>
+            </>
+          )}
+
+          {simili.length > 0 && (
+            <>
+              <h5 className="mb-2 mt-4">Giochi simili</h5>
+              <div className="fila-giochi">
+                {simili.map((g) => (
+                  <div
+                    key={g.id}
+                    className="fila-card"
+                    onClick={() => navigate("/gioco/" + g.id)}
+                  >
+                    {g.background_image ? (
+                      <img
+                        src={g.background_image}
+                        alt={g.name}
+                        className="fila-cover"
+                      />
+                    ) : (
+                      <div className="fila-cover fila-cover-vuota">
+                        {g.name}
+                      </div>
+                    )}
+                    <div className="fila-titolo">{g.name}</div>
+                  </div>
                 ))}
               </div>
             </>
@@ -401,7 +473,11 @@ function DettaglioGioco() {
               <Card key={rec.id} className="mb-3">
                 <Card.Body>
                   <div className="d-flex justify-content-between align-items-start">
-                    <div className="d-flex align-items-center gap-2">
+                    <div
+                      className="d-flex align-items-center gap-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => navigate("/utente/" + rec.utente.id)}
+                    >
                       {rec.utente.avatar ? (
                         <img
                           src={rec.utente.avatar}

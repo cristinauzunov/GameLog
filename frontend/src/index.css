@@ -162,3 +162,10 @@ h1, h2, h3, h4, h5, h6,
 .screenshot-img:hover {
     transform: scale(1.03);
 }
+
+footer.footer {
+    background-color: rgba(21, 23, 28, 0.4) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+}

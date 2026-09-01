@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import api from "../api";
+import Spinner8bit from "../components/Spinner8bit";
 
 function Amici() {
   const [utenti, setUtenti] = useState([]);
@@ -8,6 +10,8 @@ function Amici() {
   const [follower, setFollower] = useState([]);
   const [caricamento, setCaricamento] = useState(true);
   const [vista, setVista] = useState("tutti");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     caricaTutto();
@@ -60,7 +64,7 @@ function Amici() {
   if (caricamento) {
     return (
       <Container className="mt-5 text-center">
-        <Spinner animation="border" />
+        <Spinner8bit />
       </Container>
     );
   }
@@ -105,7 +109,11 @@ function Amici() {
     return (
       <Card key={u.id} className="mb-2">
         <Card.Body className="d-flex align-items-center justify-content-between">
-          <div className="d-flex align-items-center gap-3">
+          <div
+            className="d-flex align-items-center gap-3"
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate("/utente/" + u.id)}
+          >
             {avatarDi(u)}
             <div>
               <strong>{u.nome || u.username}</strong>
@@ -138,7 +146,7 @@ function Amici() {
   }
 
   let listaMostrata = utenti;
-  let titoloLista = "Scopri nuovi utenti";
+  let titoloLista = "Scopri persone";
   if (vista === "seguiti") {
     listaMostrata = seguiti;
     titoloLista = "Persone che segui";
@@ -199,7 +207,7 @@ function Amici() {
       <h4 className="mt-4 mb-3">{titoloLista}</h4>
 
       {listaMostrata.length === 0 ? (
-        <p className="text-muted">ancora nessun follower</p>
+        <p className="text-muted">Nessun utente in questa lista.</p>
       ) : (
         listaMostrata.map((u) => rigaUtente(u))
       )}

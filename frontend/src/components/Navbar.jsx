@@ -143,6 +143,8 @@ function Navbar() {
           <BarChart /> <span className="sidebar-testo">Statistiche</span>
         </NavLink>
 
+        <div className="sidebar-sezione sidebar-testo">Social</div>
+
         <NavLink
           to="/feed"
           onClick={chiudi}

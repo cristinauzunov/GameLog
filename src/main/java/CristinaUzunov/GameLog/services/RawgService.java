@@ -1,14 +1,11 @@
 package CristinaUzunov.GameLog.services;
 
-import CristinaUzunov.GameLog.dto.RawgGiocoDTO;
-import CristinaUzunov.GameLog.dto.RawgRispostaDTO;
-import CristinaUzunov.GameLog.dto.RawgScreenshotDTO;
+import CristinaUzunov.GameLog.dto.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import CristinaUzunov.GameLog.dto.RawgDettaglioDTO;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,6 +112,41 @@ public class RawgService {
 
         } catch (Exception e) {
             System.out.println("Errore RAWG screenshot: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+    public List<RawgGiocoDTO> getSimili(Long idRawg) {
+        try {
+            String url = "https://api.rawg.io/api/games/" + idRawg + "/game-series?key=" + apiKey + "&page_size=6";
+            RawgRispostaDTO risposta = restTemplate.getForObject(url, RawgRispostaDTO.class);
+
+            if (risposta == null || risposta.getResults() == null) {
+                return new ArrayList<>();
+            }
+            return risposta.getResults();
+
+        } catch (Exception e) {
+            System.out.println("Errore RAWG giochi simili: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+    public List<String> getVideo(Long idRawg) {
+        try {
+            String url = "https://api.rawg.io/api/games/" + idRawg + "/movies?key=" + apiKey;
+            RawgVideoDTO risposta = restTemplate.getForObject(url, RawgVideoDTO.class);
+
+            List<String> video = new ArrayList<>();
+            if (risposta != null && risposta.getResults() != null) {
+                for (int i = 0; i < risposta.getResults().size(); i++) {
+                    if (risposta.getResults().get(i).getData() != null) {
+                        video.add(risposta.getResults().get(i).getData().getMax());
+                    }
+                }
+            }
+            return video;
+
+        } catch (Exception e) {
+            System.out.println("Errore RAWG video: " + e.getMessage());
             return new ArrayList<>();
         }
     }

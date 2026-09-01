@@ -15,6 +15,7 @@ import Footer from "./components/Footer";
 import Amici from "./pages/Amici";
 import Feed from "./pages/Feed";
 import Notifiche from "./pages/Notifiche";
+import ProfiloUtente from "./pages/ProfiloUtente";
 
 function App() {
   return (
@@ -139,8 +140,21 @@ function App() {
             </RottaProtetta>
           }
         />
+
+                <Route
+          path="/utente/:id"
+          element={
+            <RottaProtetta>
+              <div className="contenuto">
+                <ProfiloUtente />
+              </div>
+            </RottaProtetta>
+          }
+        />
       </Routes>
-      <Footer />
+      <div className="footer-wrapper">
+        <Footer />
+      </div>
     </>
   );
 }

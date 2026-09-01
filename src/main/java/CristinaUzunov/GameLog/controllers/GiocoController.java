@@ -51,4 +51,15 @@ public class GiocoController {
     public List<String> getScreenshot(@PathVariable Long id) {
         return rawgService.getScreenshot(id);
     }
+
+    //giochi simili
+    @GetMapping("/{id}/simili")
+    public List<RawgGiocoDTO> getSimili(@PathVariable Long id) {
+        return rawgService.getSimili(id);
+    }
+    //video gioco
+    @GetMapping("/{id}/video")
+    public List<String> getVideo(@PathVariable Long id) {
+        return rawgService.getVideo(id);
+    }
 }

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Card, Spinner } from "react-bootstrap";
+import { Container, Card } from "react-bootstrap";
 import api from "../api";
+import Spinner8bit from "../components/Spinner8bit";
 
 function Feed() {
   const [elementi, setElementi] = useState([]);
@@ -47,7 +48,6 @@ function Feed() {
           });
         }
 
-        // ordino dal piu recente (per data, poi per id come spareggio)
         lista.sort(function (x, y) {
           if (x.data === y.data) {
             return y.ordinamento - x.ordinamento;
@@ -68,7 +68,7 @@ function Feed() {
   if (caricamento) {
     return (
       <Container className="mt-5 text-center">
-        <Spinner animation="border" />
+        <Spinner8bit />
       </Container>
     );
   }
@@ -109,10 +109,9 @@ function Feed() {
     );
   }
 
-  // testo dell'azione in base al tipo di attivita
   function testoAzione(tipo, titolo) {
     if (tipo === "AGGIUNTO") {
-      return "ha aggiunto " + titolo + " alla collezione";
+      return "ha aggiunto " + titolo;
     }
     if (tipo === "IN_CORSO") {
       return "sta giocando a " + titolo;
@@ -152,7 +151,11 @@ function Feed() {
         elementi.map((el) => (
           <Card key={el.id} className="mb-3">
             <Card.Body>
-              <div className="d-flex align-items-center gap-2 mb-2">
+              <div
+                className="d-flex align-items-center gap-2 mb-2"
+                style={{ cursor: "pointer" }}
+                onClick={() => navigate("/utente/" + el.utente.id)}
+              >
                 {avatarDi(el.utente)}
                 <div>
                   <strong>{el.utente.nome || el.utente.username}</strong>
