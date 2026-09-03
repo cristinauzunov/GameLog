@@ -8,8 +8,6 @@ import "../cerca.css";
 
 function Cerca() {
   const [titolo, setTitolo] = useState("");
-  const [ordina, setOrdina] = useState("");
-  const [anno, setAnno] = useState("");
   const [risultati, setRisultati] = useState([]);
   const [caricamento, setCaricamento] = useState(false);
   const [cercato, setCercato] = useState(false);
@@ -33,14 +31,7 @@ function Cerca() {
       setCaricamento(true);
       setCercato(true);
       try {
-        let url = "/giochi/cerca?titolo=" + titolo;
-        if (ordina) {
-          url = url + "&ordina=" + ordina;
-        }
-        if (anno) {
-          url = url + "&anno=" + anno;
-        }
-        const risposta = await api.get(url);
+        const risposta = await api.get("/giochi/cerca?titolo=" + titolo);
         setRisultati(risposta.data);
       } catch {
         setRisultati([]);
@@ -48,7 +39,7 @@ function Cerca() {
         setCaricamento(false);
       }
     }
-  }, [titolo, ordina, anno]);
+  }, [titolo]);
 
   return (
     <Container className="mt-4">
@@ -65,36 +56,6 @@ function Cerca() {
             onChange={(e) => setTitolo(e.target.value)}
           />
         </div>
-      </div>
-
-      <div className="d-flex gap-2 mb-4 flex-wrap justify-content-center">
-        <select
-          className="form-select"
-          style={{ maxWidth: "200px" }}
-          value={ordina}
-          onChange={(e) => setOrdina(e.target.value)}
-        >
-          <option value="">Rilevanza</option>
-          <option value="name">Nome (A-Z)</option>
-          <option value="-released">Piu recenti</option>
-          <option value="-metacritic">Miglior voto</option>
-        </select>
-
-        <select
-          className="form-select"
-          style={{ maxWidth: "150px" }}
-          value={anno}
-          onChange={(e) => setAnno(e.target.value)}
-        >
-          <option value="">Tutti gli anni</option>
-          <option value="2024">2024</option>
-          <option value="2023">2023</option>
-          <option value="2022">2022</option>
-          <option value="2021">2021</option>
-          <option value="2020">2020</option>
-          <option value="2015">2015</option>
-          <option value="2010">2010</option>
-        </select>
       </div>
 
       {caricamento && <Spinner8bit />}
