@@ -94,10 +94,13 @@ function Navbar() {
 
       <div className={"sidebar" + (aperta ? " aperta" : "")}>
         <div className="sidebar-logo">
-          <Controller />
+          <img
+            src="/GameLog_1.png"
+            alt="logo"
+            style={{ width: "32px", height: "32px" }}
+          />
           <span className="sidebar-testo">GameLog</span>
         </div>
-
         <NavLink
           to="/"
           end
